@@ -1,12 +1,21 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { Button } from '@/components/ui/button'
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import ChangePasswordDialog from '../auth/ChangePasswordDialog'
-import { Home, FileText, Search, Key, LogOut } from 'lucide-react'
+import { Home, FileText, Search, Key, LogOut, User, Menu, ChevronDown } from 'lucide-react'
 
 export default function Navbar() {
+  const location = useLocation()
   const navigate = useNavigate()
   const { user, signOut } = useAuth()
 
@@ -27,92 +36,148 @@ export default function Navbar() {
     }
   }
 
+  const isActive = (path) => location.pathname === path
+
+  const navLinks = [
+    { path: '/', label: 'Home', icon: Home },
+    { path: '/complete-report', label: 'Reports', icon: FileText },
+    { path: '/search', label: 'Search', icon: Search },
+  ]
+
   return (
     <>
-      <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4">
+      <nav className="bg-white border-b border-gray-200 shadow-md sticky top-0 z-50 backdrop-blur-sm bg-white/95">
+        <div className="container mx-auto px-4 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo & Brand */}
-            <div className="flex items-center space-x-3">
-              <img 
-                src="/iss-logo.png" 
-                alt="ISS Logo" 
-                className="h-10 w-auto"
-                onError={(e) => {
-                  // Fallback if logo doesn't load
-                  e.target.style.display = 'none'
-                }}
-              />
-              <div>
-                <h1 className="font-bold text-lg text-gray-900 leading-tight">
-                  Welder Management
+            <Link to="/" className="flex items-center space-x-3 group">
+              <div className="relative">
+                <img 
+                  src="/iss-logo.png" 
+                  alt="ISS Logo" 
+                  className="h-12 w-auto transition-transform duration-300 group-hover:scale-105"
+                  onError={(e) => {
+                    e.target.style.display = 'none'
+                  }}
+                />
+              </div>
+              <div className="hidden md:block">
+                <h1 className="font-bold text-lg text-gray-900 leading-tight tracking-tight">
+                  Welder Management System
                 </h1>
-                <p className="text-xs text-gray-600">
-                  Industrial Support Services
+                <p className="text-xs text-gray-500 font-medium">
+                  Industrial Support Services Co.
                 </p>
               </div>
-            </div>
+            </Link>
 
-            {/* Navigation Links */}
-            <div className="flex items-center space-x-2">
-              <Link to="/">
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <Home className="w-4 h-4" />
-                  <span className="hidden sm:inline">Home</span>
-                </Button>
-              </Link>
-              
-              <Link to="/complete-report">
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <FileText className="w-4 h-4" />
-                  <span className="hidden sm:inline">Reports</span>
-                </Button>
-              </Link>
-              
-              <Link to="/search">
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <Search className="w-4 h-4" />
-                  <span className="hidden sm:inline">Search</span>
-                </Button>
-              </Link>
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center space-x-1">
+              {navLinks.map((link) => {
+                const Icon = link.icon
+                const active = isActive(link.path)
+                return (
+                  <Link key={link.path} to={link.path}>
+                    <Button
+                      variant={active ? 'default' : 'ghost'}
+                      size="sm"
+                      className={`gap-2 transition-all duration-200 ${
+                        active 
+                          ? 'shadow-sm' 
+                          : 'hover:bg-gray-100 hover:shadow-sm'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      {link.label}
+                    </Button>
+                  </Link>
+                )
+              })}
 
               {/* Divider */}
-              <div className="h-6 w-px bg-gray-300 mx-2" />
+              <div className="h-8 w-px bg-gray-300 mx-3" />
 
-              {/* User Actions */}
+              {/* User Menu - Desktop */}
               {user && (
-                <div className="flex items-center space-x-2">
-                  {/* User Email */}
-                  <div className="hidden md:block text-right mr-2">
-                    <p className="text-sm font-medium text-gray-700">
-                      {user.email}
-                    </p>
-                    <p className="text-xs text-gray-500">Administrator</p>
-                  </div>
-
-                  {/* Change Password */}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-2"
-                    onClick={() => setShowChangePassword(true)}
-                  >
-                    <Key className="w-4 h-4" />
-                    <span className="hidden sm:inline">Change Password</span>
-                  </Button>
-
-                  {/* Logout */}
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    className="gap-2"
-                    onClick={() => setShowLogoutConfirm(true)}
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span className="hidden sm:inline">Logout</span>
-                  </Button>
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold text-sm shadow-md">
+                          {user.email.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="hidden xl:block text-left">
+                          <p className="text-xs font-medium text-gray-700 leading-none">
+                            {user.email.split('@')[0]}
+                          </p>
+                          <p className="text-xs text-gray-500">Administrator</p>
+                        </div>
+                        <ChevronDown className="w-4 h-4 text-gray-500" />
+                      </div>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium">{user.email}</p>
+                        <p className="text-xs text-gray-500">Administrator</p>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => setShowChangePassword(true)}>
+                      <Key className="mr-2 h-4 w-4" />
+                      Change Password
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      onClick={() => setShowLogoutConfirm(true)}
+                      className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
+            </div>
+
+            {/* Mobile Menu */}
+            <div className="lg:hidden">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <Menu className="w-5 h-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>Navigation</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {navLinks.map((link) => {
+                    const Icon = link.icon
+                    return (
+                      <DropdownMenuItem key={link.path} asChild>
+                        <Link to={link.path} className="flex items-center">
+                          <Icon className="mr-2 h-4 w-4" />
+                          {link.label}
+                        </Link>
+                      </DropdownMenuItem>
+                    )
+                  })}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>Account</DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => setShowChangePassword(true)}>
+                    <Key className="mr-2 h-4 w-4" />
+                    Change Password
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setShowLogoutConfirm(true)}
+                    className="text-red-600"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
