@@ -7,6 +7,10 @@ export default {
 ],
   theme: {
     extend: {
+      animation: {
+        'fadeIn': 'fadeIn 0.4s ease-out forwards',
+        'soft-pulse': 'softPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
