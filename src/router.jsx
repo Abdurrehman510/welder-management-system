@@ -11,7 +11,8 @@ import UpdateForm1Page from './pages/UpdateForm1Page';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import TestPage from './pages/TestPage';
-import AuthTest from './pages/AuthTest'
+import AuthTest from './pages/AuthTest';
+import TestDataExtractor from './pages/TestDataExtractor'; // ADD THIS
 
 export const router = createBrowserRouter([
   {
@@ -57,6 +58,10 @@ export const router = createBrowserRouter([
       {
         path: 'auth-test',
         element: <AuthTest />,
+      },
+      {
+        path: 'test-data-extractor', // ADD THIS
+        element: <TestDataExtractor />,
       },
     ],
   },
