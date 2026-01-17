@@ -56,6 +56,7 @@ export default function Form1Details() {
     }
   }
 
+  
   /**
    * Fetch all welders
    */
@@ -142,13 +143,36 @@ export default function Form1Details() {
    * Handle View Form2 PDF
    */
   const handleViewForm2 = async (welder) => {
-    setGeneratingPDF(`form2-${welder.id}`)
+  setGeneratingPDF(`form2-${welder.id}`)
 
-    try {
-      // TODO: Implement Form2 PDF in next part
-      toast.info('Form2 PDF Generation', {
-        description: 'Form2 PDF (Continuity Record) will be implemented next',
-        duration: 3000,
+  try {
+    // Fetch complete welder data
+    const { data: welderData, error: welderError } = await welderService.getWelderById(welder.id)
+    if (welderError) throw new Error(welderError)
+
+    const { data: wpqData, error: wpqError } = await wpqService.getWPQRecordByWelderId(welder.id)
+    const { data: continuityData } = await continuityService.getContinuityRecordsByWelderId(welder.id)
+
+    // Prepare PDF data
+    const pdfData = await pdfService.prepareForm2Data({
+      welder: welderData,
+      wpq_records: wpqData ? [wpqData] : [],
+      continuity_records: continuityData || []
+    })
+
+    // Import Form2PDF dynamically
+    const Form2PDF = (await import('../components/pdf/Form2PDF/Form2PDF')).default
+
+    // Generate PDF
+    const blob = await pdf(<Form2PDF data={pdfData} />).toBlob()
+
+    // Download PDF
+    const filename = pdfService.generateFilename('form2', welder.certificate_no, welder.welder_name)
+    pdfService.downloadPDF(blob, filename)
+
+    toast.success('Form2 PDF Generated Successfully', {
+      description: `Downloaded: ${filename}`,
+      duration: 4000,
       })
     } catch (error) {
       console.error('Form2 PDF generation error:', error)
