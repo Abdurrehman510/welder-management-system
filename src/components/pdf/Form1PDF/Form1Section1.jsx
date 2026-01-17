@@ -1,89 +1,105 @@
+// ========== Form1Section1.jsx ==========
 import { View, Text } from '@react-pdf/renderer'
 import { form1Styles } from './form1Styles'
 
 /**
- * Form1 Section 1: Basic Information
- * Welder identification and test details
+ * Form1 Section 1: Basic Information - ENHANCED
+ * Professional layout with improved visual hierarchy
  */
 
 export default function Form1Section1({ data }) {
-  const InfoField = ({ label, value, style = {} }) => (
-    <View style={[form1Styles.infoField, style]}>
-      <Text style={form1Styles.fieldLabel}>{label}:</Text>
-      <Text style={form1Styles.fieldValue}>{value || 'N/A'}</Text>
-    </View>
-  )
-
   return (
     <View>
       {/* Section Header */}
       <View style={form1Styles.sectionHeader}>
         <Text style={form1Styles.sectionTitle}>
-          Welder Performance Qualification Test Record
+          Welder & Test Information
+        </Text>
+        <Text style={form1Styles.sectionSubtitle}>
+          Personnel & Test Details
         </Text>
       </View>
 
-      {/* Info Grid */}
-      <View style={form1Styles.infoGrid}>
-        {/* Row 1 */}
+      {/* Info Container */}
+      <View style={form1Styles.infoContainer}>
+        {/* Row 1: Client & Welder Name */}
         <View style={form1Styles.infoRow}>
-          <InfoField 
-            label="Client/Contractor" 
-            value={data.clientContractor}
-            style={form1Styles.infoFieldHalf}
-          />
-          <InfoField 
-            label="Welder Name" 
-            value={data.welderName}
-            style={form1Styles.infoFieldHalf}
-          />
+          <View style={form1Styles.infoFieldHalf}>
+            <Text style={form1Styles.fieldLabel}>Client/Contractor:</Text>
+            <View style={form1Styles.fieldValueContainer}>
+              <Text style={form1Styles.fieldValue}>{data.clientContractor || 'N/A'}</Text>
+            </View>
+          </View>
+          <View style={form1Styles.infoFieldHalf}>
+            <Text style={form1Styles.fieldLabel}>Welder Name:</Text>
+            <View style={form1Styles.fieldValueContainer}>
+              <Text style={[form1Styles.fieldValue, { fontWeight: 'bold' }]}>
+                {data.welderName || 'N/A'}
+              </Text>
+            </View>
+          </View>
         </View>
 
-        {/* Row 2 */}
+        {/* Row 2: Iqama, Certificate, Stamp */}
         <View style={form1Styles.infoRow}>
-          <InfoField 
-            label="Iqama/Passport No" 
-            value={data.iqamaPassport}
-            style={form1Styles.infoFieldThird}
-          />
-          <InfoField 
-            label="Certificate No" 
-            value={data.certificateNo}
-            style={form1Styles.infoFieldThird}
-          />
-          <InfoField 
-            label="Symbol/Stamp No" 
-            value={data.symbolStampNo}
-            style={form1Styles.infoFieldThird}
-          />
+          <View style={form1Styles.infoFieldThird}>
+            <Text style={form1Styles.fieldLabel}>Iqama/Passport No:</Text>
+            <View style={form1Styles.fieldValueContainer}>
+              <Text style={form1Styles.fieldValue}>{data.iqamaPassport || 'N/A'}</Text>
+            </View>
+          </View>
+          <View style={form1Styles.infoFieldThird}>
+            <Text style={form1Styles.fieldLabel}>Certificate No:</Text>
+            <View style={form1Styles.fieldValueContainer}>
+              <Text style={[form1Styles.fieldValue, { fontWeight: 'bold', color: '#1E40AF' }]}>
+                {data.certificateNo || 'N/A'}
+              </Text>
+            </View>
+          </View>
+          <View style={form1Styles.infoFieldThird}>
+            <Text style={form1Styles.fieldLabel}>Symbol/Stamp No:</Text>
+            <View style={form1Styles.fieldValueContainer}>
+              <Text style={form1Styles.fieldValue}>{data.symbolStampNo || 'N/A'}</Text>
+            </View>
+          </View>
         </View>
 
-        {/* Row 3 */}
+        {/* Row 3: Dates & Designation */}
         <View style={form1Styles.infoRow}>
-          <InfoField 
-            label="Date Welded" 
-            value={data.dateWelded}
-            style={form1Styles.infoFieldThird}
-          />
-          <InfoField 
-            label="Designation" 
-            value={data.designation}
-            style={form1Styles.infoFieldThird}
-          />
-          <InfoField 
-            label="Date of Birth" 
-            value={data.dateOfBirth}
-            style={form1Styles.infoFieldThird}
-          />
+          <View style={form1Styles.infoFieldThird}>
+            <Text style={form1Styles.fieldLabel}>Date Welded:</Text>
+            <View style={form1Styles.fieldValueContainer}>
+              <Text style={form1Styles.fieldValue}>{data.dateWelded || 'N/A'}</Text>
+            </View>
+          </View>
+          <View style={form1Styles.infoFieldThird}>
+            <Text style={form1Styles.fieldLabel}>Designation:</Text>
+            <View style={form1Styles.fieldValueContainer}>
+              <Text style={form1Styles.fieldValue}>{data.designation || 'N/A'}</Text>
+            </View>
+          </View>
+          <View style={form1Styles.infoFieldThird}>
+            <Text style={form1Styles.fieldLabel}>Date of Birth:</Text>
+            <View style={form1Styles.fieldValueContainer}>
+              <Text style={form1Styles.fieldValue}>{data.dateOfBirth || 'N/A'}</Text>
+            </View>
+          </View>
         </View>
 
-        {/* Row 4 */}
+        {/* Row 4: Joining Date & Nationality */}
         <View style={form1Styles.infoRow}>
-          <InfoField 
-            label="Date of Joining" 
-            value={data.dateOfJoining}
-            style={form1Styles.infoFieldHalf}
-          />
+          <View style={form1Styles.infoFieldHalf}>
+            <Text style={form1Styles.fieldLabel}>Date of Joining:</Text>
+            <View style={form1Styles.fieldValueContainer}>
+              <Text style={form1Styles.fieldValue}>{data.dateOfJoining || 'N/A'}</Text>
+            </View>
+          </View>
+          <View style={form1Styles.infoFieldHalf}>
+            <Text style={form1Styles.fieldLabel}>Nationality:</Text>
+            <View style={form1Styles.fieldValueContainer}>
+              <Text style={form1Styles.fieldValue}>{data.nationality || 'N/A'}</Text>
+            </View>
+          </View>
         </View>
       </View>
     </View>

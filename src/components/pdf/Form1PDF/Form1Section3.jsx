@@ -3,19 +3,31 @@ import { form1Styles } from './form1Styles'
 
 /**
  * Form1 Section 3: Testing Variables Part 1
- * ✅ FIXED: Radio button with proper symbol rendering
+ * ✅ PROFESSIONAL RADIO BUTTON IMPLEMENTATION
  */
 
 export default function Form1Section3({ data }) {
-  // Use symbols that render properly in PDF
-  const selectedRadio = '●' // Filled circle
-  const unselectedRadio = '○' // Empty circle
-  
+  // Professional Radio Button Component
+  const RadioButton = ({ selected, label }) => (
+    <View style={form1Styles.radioContainer}>
+      <View style={[
+        form1Styles.radioOuter,
+        selected && form1Styles.radioOuterSelected
+      ]}>
+        {selected && <View style={form1Styles.radioInner} />}
+      </View>
+      <Text style={[
+        form1Styles.radioLabel,
+        selected && form1Styles.radioLabelSelected
+      ]}>
+        {label}
+      </Text>
+    </View>
+  )
+
   // Determine which radio is selected
   const isPlate = data.platePipeType === 'plate'
   const isPipe = data.platePipeType === 'pipe'
-
-  console.log('📻 Section3 - platePipeType:', data.platePipeType, '| isPlate:', isPlate, '| isPipe:', isPipe)
 
   const variables = [
     {
@@ -29,9 +41,10 @@ export default function Form1Section3({ data }) {
       range: data.weldingTypeRange,
     },
     {
-      name: `Backing     ${isPlate ? selectedRadio : unselectedRadio} Plate     ${isPipe ? selectedRadio : unselectedRadio} Pipe`,
+      name: 'Backing Type',
       actual: data.backingTypeActual,
       range: data.backingTypeRange,
+      hasRadio: true,
     },
     {
       name: 'Plate/Pipe',
@@ -72,6 +85,9 @@ export default function Form1Section3({ data }) {
         <Text style={form1Styles.sectionTitle}>
           Testing Variables - Part 1
         </Text>
+        <Text style={form1Styles.sectionSubtitle}>
+          Welding Process & Material Specifications
+        </Text>
       </View>
 
       {/* Table */}
@@ -98,12 +114,27 @@ export default function Form1Section3({ data }) {
               index % 2 === 1 && form1Styles.tableRowAlt
             ]}
           >
-            <Text style={[form1Styles.tableCell, form1Styles.tableCellVariable]}>
-              {item.name}
-            </Text>
+            {/* Variable Name with Radio Buttons */}
+            <View style={[form1Styles.tableCellVariable, { flexDirection: 'column' }]}>
+              <Text style={[form1Styles.tableCell, { fontWeight: 'bold', marginBottom: 2 }]}>
+                {item.name}
+              </Text>
+              
+              {/* Radio Buttons for Backing Type */}
+              {item.hasRadio && (
+                <View style={{ flexDirection: 'row', marginTop: 3 }}>
+                  <RadioButton selected={isPlate} label="Plate" />
+                  <RadioButton selected={isPipe} label="Pipe" />
+                </View>
+              )}
+            </View>
+
+            {/* Actual */}
             <Text style={[form1Styles.tableCell, form1Styles.tableCellActual]}>
               {item.actual || 'N/A'}
             </Text>
+
+            {/* Range */}
             <Text style={[form1Styles.tableCell, form1Styles.tableCellRange]}>
               {item.range || 'N/A'}
             </Text>

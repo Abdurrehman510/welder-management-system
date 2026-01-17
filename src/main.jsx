@@ -1,7 +1,3 @@
-// ✅ Add Buffer polyfill for @react-pdf/renderer
-import { Buffer } from 'buffer'
-window.Buffer = Buffer
-
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom'

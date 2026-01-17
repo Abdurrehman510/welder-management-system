@@ -1,9 +1,11 @@
+
+// ========== Form1Header.jsx ==========
 import { View, Text, Image } from '@react-pdf/renderer'
 import { form1Styles } from './form1Styles'
 
 /**
- * Form1 Header Component
- * Company info, logo, welder photo, and QR code
+ * Form1 Header Component - ENHANCED
+ * Professional header with company info, logo, welder photo, and QR code
  */
 
 export default function Form1Header({ data }) {
@@ -20,16 +22,16 @@ export default function Form1Header({ data }) {
       {/* Center: Company Info */}
       <View style={form1Styles.companyInfo}>
         <Text style={form1Styles.companyName}>
-          {'Industrial Support Services Company'}
+          Industrial Support Services Company
         </Text>
         <Text style={form1Styles.companyDetails}>
-          Post Box 11501, Dammam 31463, K.S.A
+          Post Box 11501, Dammam 31463, Kingdom of Saudi Arabia
         </Text>
         <Text style={form1Styles.companyDetails}>
-          Ph # +966 13 844 7733 | Fax # +966 13 844 8833
+          Phone: +966 13 844 7733 | Fax: +966 13 844 8833
         </Text>
         <Text style={form1Styles.companyDetails}>
-          Email: info@issksa.com
+          Email: info@issksa.com | Web: www.issksa.com
         </Text>
       </View>
 
