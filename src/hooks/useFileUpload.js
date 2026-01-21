@@ -17,27 +17,60 @@ export function useFileUpload() {
    * @param {string} type - 'photo' or 'signature'
    * @returns {Promise<{file: File|null, error: string|null}>}
    */
-  const validateFile = async (file, type = 'photo') => {
-    setUploading(false) // Not actually uploading, just validating
-    setError(null)
+  const validateFile=(file, type = 'photo') => {
+  const maxSize = type === 'photo' ? 10 * 1024 * 1024 : 10 * 1024 * 1024 // 10MB for both
+  
+  // ✅ Strict validation - Common image types only
+  const allowedMimeTypes = [
+    'image/jpeg',
+    'image/png',
+    'image/webp'
+  ]
+  
+  const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp']
+  
+  const typeLabel = type === 'photo' ? 'Photo' : 'Signature'
 
-    try {
-      // Use storage service validation
-      const validation = storageService.validateFile(file, type)
-
-      if (!validation.valid) {
-        setError(validation.error)
-        return { file: null, error: validation.error }
-      }
-
-      // File is valid, return it for preview/storage
-      return { file, error: null }
-    } catch (err) {
-      const errorMessage = err.message || 'File validation failed'
-      setError(errorMessage)
-      return { file: null, error: errorMessage }
+  // Check if file exists
+  if (!file) {
+    return {
+      valid: false,
+      error: `${typeLabel} file is missing`
     }
   }
+
+  // Get file extension
+  const fileExtension = file.name.split('.').pop().toLowerCase()
+
+  // ✅ STRICT: Check file extension first
+  if (!allowedExtensions.includes(fileExtension)) {
+    return {
+      valid: false,
+      error: `Invalid File Type: ${typeLabel} must be JPG, JPEG, PNG, or WEBP. Your file has extension: .${fileExtension}`
+    }
+  }
+
+  // ✅ Check MIME type (some PDFs might have wrong extension)
+  if (file.type && !allowedMimeTypes.includes(file.type.toLowerCase())) {
+    return {
+      valid: false,
+      error: `Invalid File Type: ${typeLabel} must be JPG, JPEG, PNG, or WEBP. Detected type: ${file.type}`
+    }
+  }
+
+  // Check file size
+  if (file.size > maxSize) {
+    const maxSizeMB = (maxSize / 1024 / 1024).toFixed(1)
+    const fileSizeMB = (file.size / 1024 / 1024).toFixed(2)
+    
+    return {
+      valid: false,
+      error: `File Size Too Large: The selected ${typeLabel.toLowerCase()} (${fileSizeMB}MB) exceeds the ${maxSizeMB}MB limit.`
+    }
+  }
+
+  return { valid: true, error: null }
+}
 
   /**
    * DEPRECATED: This function now only validates, doesn't upload

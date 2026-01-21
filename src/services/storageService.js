@@ -2,19 +2,30 @@ import { supabase } from '../lib/supabase'
 
 /**
  * File upload service for Supabase Storage
+ * ✅ FINAL VERSION: Accepts common image types only
  * Enhanced with comprehensive validation
  */
 
 class StorageService {
   /**
-   * Validate file before upload
+   * ✅ FINAL: Validate file - Common image types only
+   * Accepted types: JPG, JPEG, PNG, WEBP
+   * 
    * @param {File} file - File to validate
    * @param {string} type - Type of file ('photo' or 'signature')
    * @returns {{valid: boolean, error: string|null}}
    */
   validateFile(file, type = 'photo') {
-    const maxSize = type === 'photo' ? 5 * 1024 * 1024 : 2 * 1024 * 1024 // 5MB or 2MB
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+    const maxSize = type === 'photo' ? 10 * 1024 * 1024 : 10 * 1024 * 1024 // 10MB for both
+    
+    // ✅ Common image types only (no GIF, BMP, SVG, etc.)
+    const allowedTypes = [
+      'image/jpeg',
+      'image/jpg', 
+      'image/png',
+      'image/webp'
+    ]
+    
     const typeLabel = type === 'photo' ? 'Photo' : 'Signature'
 
     // Check if file exists
@@ -25,11 +36,11 @@ class StorageService {
       }
     }
 
-    // Check file type
-    if (!allowedTypes.includes(file.type)) {
+    // ✅ Check if file type is in allowed list
+    if (!allowedTypes.includes(file.type.toLowerCase())) {
       return {
         valid: false,
-        error: `Invalid File Type: ${typeLabel} must be JPEG, JPG, PNG, or WEBP. Your file type: ${file.type}`
+        error: `Invalid File Type: ${typeLabel} must be JPG, JPEG, PNG, or WEBP. Your file type: ${file.type}`
       }
     }
 
@@ -70,10 +81,10 @@ class StorageService {
       const fileExt = file.name.split('.').pop()
       const fileName = path || `${timestamp}-${randomStr}.${fileExt}`
 
-      console.log(`Uploading ${type} to ${bucket}:`, fileName)
+      console.log(`✅ Uploading ${type} (${file.type}) to ${bucket}:`, fileName)
 
       // Upload file
-      const { data, error } = await supabase.storage
+      const { data,error } = await supabase.storage
         .from(bucket)
         .upload(fileName, file, {
           cacheControl: '3600',
@@ -90,7 +101,7 @@ class StorageService {
         .from(bucket)
         .getPublicUrl(fileName)
 
-      console.log(`Successfully uploaded ${type}:`, publicUrl)
+      console.log(`✅ Successfully uploaded ${type}:`, publicUrl)
       return { url: publicUrl, error: null }
     } catch (error) {
       console.error('Storage service error:', error)
@@ -151,13 +162,13 @@ class StorageService {
   }
 
   /**
-   * Check if file is an image
+   * Check if file is an allowed image type
    * @param {File} file - File to check
    * @returns {boolean}
    */
   isImage(file) {
-    const imageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
-    return imageTypes.includes(file.type)
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+    return allowedTypes.includes(file.type.toLowerCase())
   }
 
   /**
@@ -169,6 +180,22 @@ class StorageService {
     if (bytes < 1024) return bytes + ' B'
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB'
     return (bytes / (1024 * 1024)).toFixed(2) + ' MB'
+  }
+
+  /**
+   * Get list of allowed image types
+   * @returns {Array<string>} Array of allowed MIME types
+   */
+  getAllowedImageTypes() {
+    return ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+  }
+
+  /**
+   * Get human-readable list of allowed formats
+   * @returns {string} Formatted string of allowed types
+   */
+  getAllowedFormatsString() {
+    return 'JPG, JPEG, PNG, WEBP'
   }
 }
 
