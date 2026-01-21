@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -11,10 +11,11 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import SearchBar from '../components/reports/SearchBar'
 import LoadingSpinner from '../components/common/LoadingSpinner'
 import EmptyState from '../components/common/EmptyState'
 import { FileText, Users, ArrowLeft, RefreshCw, Download } from 'lucide-react'
-import welderService from '../services/welderService'
+import { useWelders } from '../hooks/useWelders'
 import wpqService from '../services/wpqService'
 import continuityService from '../services/continuityService'
 import pdfService from '../services/pdfService'
@@ -25,15 +26,23 @@ import { getInitials } from '../utils/pdfHelpers'
 
 /**
  * Form1 Details Page
- * View all welders with PDF generation options
+ * View all welders with PDF generation options and search functionality
  */
 
 export default function Form1Details() {
   const navigate = useNavigate()
-  const [welders, setWelders] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const {
+    welders,
+    loading,
+    error,
+    searchTerm,
+    searchWelders,
+    refresh,
+    clearSearch,
+  } = useWelders()
+
   const [generatingPDF, setGeneratingPDF] = useState(null)
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   /**
    * Format date for display
@@ -56,34 +65,47 @@ export default function Form1Details() {
     }
   }
 
-  
   /**
-   * Fetch all welders
+   * Handle search
    */
-  const fetchWelders = async () => {
-    setLoading(true)
-    setError(null)
+  const handleSearch = (term) => {
+    if (!term.trim()) {
+      clearSearch()
+      return
+    }
+    searchWelders(term)
+  }
 
+  /**
+   * Handle refresh
+   */
+  const handleRefresh = async () => {
+    setIsRefreshing(true)
     try {
-      const { data, error: fetchError } = await welderService.getAllWelders()
-
-      if (fetchError) {
-        throw new Error(fetchError)
-      }
-
-      setWelders(data || [])
-    } catch (err) {
-      console.error('Fetch welders error:', err)
-      setError(err.message || 'Failed to load welders')
-      setWelders([])
+      await refresh()
+      toast.success('Welders Refreshed', {
+        description: 'Data has been updated successfully',
+        duration: 2000,
+      })
+    } catch (error) {
+      toast.error('Refresh Failed', {
+        description: error.message,
+      })
     } finally {
-      setLoading(false)
+      setIsRefreshing(false)
     }
   }
 
-  useEffect(() => {
-    fetchWelders()
-  }, [])
+  /**
+   * Handle clear search
+   */
+  const handleClearSearch = () => {
+    clearSearch()
+    toast.info('Search Cleared', {
+      description: 'Showing all welders',
+      duration: 2000,
+    })
+  }
 
   /**
    * Handle View Form1 PDF
@@ -92,27 +114,19 @@ export default function Form1Details() {
     setGeneratingPDF(`form1-${welder.id}`)
 
     try {
-      // Fetch complete welder data with WPQ and continuity records
-      const { data: welderData, error: welderError } = await welderService.getWelderById(welder.id)
-      
-      if (welderError) {
-        throw new Error(welderError)
-      }
-
-      // Fetch WPQ record
+      // Fetch WPQ and continuity records
       const { data: wpqData, error: wpqError } = await wpqService.getWPQRecordByWelderId(welder.id)
       
       if (wpqError && !wpqError.includes('no rows')) {
         throw new Error(wpqError)
       }
 
-      // Fetch continuity records
-      const { data: continuityData, error: continuityError } = 
+      const { data: continuityData } = 
         await continuityService.getContinuityRecordsByWelderId(welder.id)
 
       // Prepare PDF data
       const pdfData = await pdfService.prepareForm1Data({
-        welder: welderData,
+        welder: welder,
         wpq_records: wpqData ? [wpqData] : [],
         continuity_records: continuityData || []
       })
@@ -143,36 +157,32 @@ export default function Form1Details() {
    * Handle View Form2 PDF
    */
   const handleViewForm2 = async (welder) => {
-  setGeneratingPDF(`form2-${welder.id}`)
+    setGeneratingPDF(`form2-${welder.id}`)
 
-  try {
-    // Fetch complete welder data
-    const { data: welderData, error: welderError } = await welderService.getWelderById(welder.id)
-    if (welderError) throw new Error(welderError)
+    try {
+      const { data: wpqData } = await wpqService.getWPQRecordByWelderId(welder.id)
+      const { data: continuityData } = await continuityService.getContinuityRecordsByWelderId(welder.id)
 
-    const { data: wpqData, error: wpqError } = await wpqService.getWPQRecordByWelderId(welder.id)
-    const { data: continuityData } = await continuityService.getContinuityRecordsByWelderId(welder.id)
+      // Prepare PDF data
+      const pdfData = await pdfService.prepareForm2Data({
+        welder: welder,
+        wpq_records: wpqData ? [wpqData] : [],
+        continuity_records: continuityData || []
+      })
 
-    // Prepare PDF data
-    const pdfData = await pdfService.prepareForm2Data({
-      welder: welderData,
-      wpq_records: wpqData ? [wpqData] : [],
-      continuity_records: continuityData || []
-    })
+      // Import Form2PDF dynamically
+      const Form2PDF = (await import('../components/pdf/Form2PDF/Form2PDF')).default
 
-    // Import Form2PDF dynamically
-    const Form2PDF = (await import('../components/pdf/Form2PDF/Form2PDF')).default
+      // Generate PDF
+      const blob = await pdf(<Form2PDF data={pdfData} />).toBlob()
 
-    // Generate PDF
-    const blob = await pdf(<Form2PDF data={pdfData} />).toBlob()
+      // Download PDF
+      const filename = pdfService.generateFilename('form2', welder.certificate_no, welder.welder_name)
+      pdfService.downloadPDF(blob, filename)
 
-    // Download PDF
-    const filename = pdfService.generateFilename('form2', welder.certificate_no, welder.welder_name)
-    pdfService.downloadPDF(blob, filename)
-
-    toast.success('Form2 PDF Generated Successfully', {
-      description: `Downloaded: ${filename}`,
-      duration: 4000,
+      toast.success('Form2 PDF Generated Successfully', {
+        description: `Downloaded: ${filename}`,
+        duration: 4000,
       })
     } catch (error) {
       console.error('Form2 PDF generation error:', error)
@@ -185,23 +195,14 @@ export default function Form1Details() {
     }
   }
 
-  /**
-   * Handle refresh
-   */
-  const handleRefresh = async () => {
-    await fetchWelders()
-    toast.success('Refreshed', {
-      description: 'Welder list has been updated',
-      duration: 2000,
-    })
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 py-6 sm:py-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+        
+        {/* ================= HEADER ================= */}
         <div className="mb-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+
             {/* Left Section */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <Button
@@ -223,7 +224,7 @@ export default function Form1Details() {
                     Form1 Details
                   </h1>
                   <p className="text-sm text-gray-600 sm:text-base">
-                    View welder details and generate PDFs
+                    Search welders and generate PDFs
                   </p>
                 </div>
               </div>
@@ -235,29 +236,62 @@ export default function Form1Details() {
                 variant="outline"
                 size="sm"
                 onClick={handleRefresh}
-                disabled={loading}
+                disabled={loading || isRefreshing}
                 className="gap-2"
               >
-                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                <RefreshCw
+                  className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`}
+                />
                 Refresh
               </Button>
             </div>
           </div>
+
+          {/* ================= SEARCH BAR ================= */}
+          <Card className="mt-6 border-blue-100 p-4 shadow-lg sm:p-6">
+            <SearchBar
+              onSearch={handleSearch}
+              onClear={handleClearSearch}
+              loading={loading}
+              defaultValue={searchTerm}
+              placeholder="Search by welder name, designation, certificate number, or client..."
+            />
+          </Card>
         </div>
 
-        {/* Summary */}
+        {/* ================= SUMMARY ================= */}
         {!loading && (
-          <div className="mb-4">
+          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-gray-600">
-              Showing <span className="font-semibold text-gray-900">{welders.length}</span> total
-              welder{welders.length !== 1 ? 's' : ''}
+              {searchTerm ? (
+                <>
+                  Found <span className="font-semibold text-gray-900">{welders.length}</span> welder
+                  {welders.length !== 1 ? 's' : ''} matching "{searchTerm}"
+                </>
+              ) : (
+                <>
+                  Showing <span className="font-semibold text-gray-900">{welders.length}</span> total welder
+                  {welders.length !== 1 ? 's' : ''}
+                </>
+              )}
             </p>
+
+            {searchTerm && welders.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleClearSearch}
+                className="w-fit text-blue-600 hover:text-blue-700"
+              >
+                View All Welders
+              </Button>
+            )}
           </div>
         )}
 
-        {/* Error State */}
+        {/* ================= ERROR STATE ================= */}
         {error && !loading && (
-          <Card className="border-red-200 bg-red-50 p-6 sm:p-8">
+          <Card className="border-red-200 bg-red-50 p-6 shadow-lg sm:p-8">
             <EmptyState
               type="error"
               title="Failed to Load Welders"
@@ -268,14 +302,14 @@ export default function Form1Details() {
           </Card>
         )}
 
-        {/* Loading State */}
-        {loading && (
-          <Card className="p-6 sm:p-8">
+        {/* ================= LOADING STATE ================= */}
+        {loading && !isRefreshing && (
+          <Card className="p-6 shadow-lg sm:p-8">
             <LoadingSpinner size="lg" text="Loading welders..." />
           </Card>
         )}
 
-        {/* Data Table */}
+        {/* ================= DATA TABLE ================= */}
         {!loading && !error && welders.length > 0 && (
           <Card className="overflow-hidden border-gray-200 shadow-lg">
             <div className="overflow-x-auto">
@@ -396,7 +430,7 @@ export default function Form1Details() {
                       {/* DOJ */}
                       <TableCell>
                         <span className="text-gray-700">
-                          {welder.date_of_joining ? formatDisplayDate(welder.date_of_joining) : 'DOJ'}
+                          {formatDisplayDate(welder.date_of_joining)}
                         </span>
                       </TableCell>
                     </TableRow>
@@ -407,15 +441,19 @@ export default function Form1Details() {
           </Card>
         )}
 
-        {/* Empty State */}
+        {/* ================= EMPTY STATE ================= */}
         {!loading && !error && welders.length === 0 && (
-          <Card className="p-6 sm:p-8">
+          <Card className="p-6 shadow-lg sm:p-8">
             <EmptyState
-              type="noData"
-              title="No Welders Found"
-              description="Start by creating your first welder qualification record."
-              actionLabel="Create New Record"
-              onAction={() => navigate('/form1')}
+              type={searchTerm ? 'noSearchResults' : 'noData'}
+              title={searchTerm ? 'No Welders Found' : 'No Welders Available'}
+              description={
+                searchTerm
+                  ? `No welders match "${searchTerm}". Try different search terms.`
+                  : 'Start by creating your first welder qualification record.'
+              }
+              actionLabel={searchTerm ? 'Clear Search' : 'Create New Record'}
+              onAction={searchTerm ? handleClearSearch : () => navigate('/form1')}
             />
           </Card>
         )}

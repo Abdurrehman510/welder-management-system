@@ -1,3 +1,4 @@
+// src/components/reports/DetailedReportTable.jsx - UPDATED
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -11,97 +12,18 @@ import {
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import { User, AlertCircle, Loader2 } from 'lucide-react'
+import { AlertCircle } from 'lucide-react'
 import ActionButtons from './ActionButtons'
-import ConfirmDeleteDialog from './ConfirmDeleteDialog'
-import welderService from '../../services/welderService'
-import { toast } from 'sonner'
 
 /**
- * DetailedReportTable Component
- * ✅ ENHANCED: Production-grade UI with smooth animations
- * ✅ FIXED: Fully responsive mobile layout
- * ✅ IMPROVED: Professional data display
+ * DetailedReportTable Component - UPDATED
+ * ✅ Removed duplicate delete logic (now handled in ActionButtons)
+ * ✅ Simplified component structure
+ * ✅ Professional data display
  */
 
 export default function DetailedReportTable({ records, loading, onRefresh }) {
   const navigate = useNavigate()
-  const [deleteDialog, setDeleteDialog] = useState({ open: false, record: null })
-  const [actionLoading, setActionLoading] = useState(null)
-
-  /**
-   * Handle Update action
-   */
-  const handleUpdate = (record) => {
-    navigate(`/update-form1/${record.welder.id}`)
-  }
-
-  /**
-   * Handle Certificate generation
-   */
-  const handleCertificate = async (record) => {
-    setActionLoading(`certificate-${record.id}`)
-    
-    try {
-      // TODO: Implement PDF generation in Phase 6
-      toast.info('Certificate Generation', {
-        description: 'PDF generation will be implemented in Phase 6',
-        duration: 3000,
-      })
-    } catch (error) {
-      console.error('Certificate generation error:', error)
-      toast.error('Failed to generate certificate', {
-        description: error.message,
-      })
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
-  /**
-   * Handle Delete confirmation
-   */
-  const handleDeleteClick = (record) => {
-    setDeleteDialog({ open: true, record })
-  }
-
-  /**
-   * Confirm delete action
-   */
-  const confirmDelete = async () => {
-    if (!deleteDialog.record) return
-
-    setActionLoading(`delete-${deleteDialog.record.id}`)
-
-    try {
-      const { error } = await welderService.deleteWelder(deleteDialog.record.welder.id)
-
-      if (error) {
-        throw new Error(error)
-      }
-
-      toast.success('Record Deleted', {
-        description: `Successfully deleted record for ${deleteDialog.record.welder.welder_name}`,
-        duration: 4000,
-      })
-
-      // Close dialog
-      setDeleteDialog({ open: false, record: null })
-
-      // Refresh table
-      if (onRefresh) {
-        onRefresh()
-      }
-    } catch (error) {
-      console.error('Delete error:', error)
-      toast.error('Delete Failed', {
-        description: error.message || 'Unable to delete the record',
-        duration: 5000,
-      })
-    } finally {
-      setActionLoading(null)
-    }
-  }
 
   /**
    * Get initials from name
@@ -180,7 +102,7 @@ export default function DetailedReportTable({ records, loading, onRefresh }) {
                 <TableHead className="font-bold text-gray-900 min-w-[150px]">
                   Certificate No
                 </TableHead>
-                <TableHead className="font-bold text-gray-900 text-center min-w-[300px]">
+                <TableHead className="font-bold text-gray-900 text-center min-w-[350px]">
                   Actions
                 </TableHead>
               </TableRow>
@@ -250,19 +172,8 @@ export default function DetailedReportTable({ records, loading, onRefresh }) {
                   {/* Actions */}
                   <TableCell>
                     <ActionButtons
-                      onUpdate={() => handleUpdate(record)}
-                      onCertificate={() => handleCertificate(record)}
-                      onDelete={() => handleDeleteClick(record)}
-                      loading={actionLoading !== null}
-                      loadingAction={
-                        actionLoading === `update-${record.id}`
-                          ? 'update'
-                          : actionLoading === `certificate-${record.id}`
-                          ? 'certificate'
-                          : actionLoading === `delete-${record.id}`
-                          ? 'delete'
-                          : null
-                      }
+                      record={record}
+                      onRefresh={onRefresh}
                     />
                   </TableCell>
                 </TableRow>
@@ -272,7 +183,7 @@ export default function DetailedReportTable({ records, loading, onRefresh }) {
         </div>
       </Card>
 
-      {/* ✅ Mobile Card View (New!) */}
+      {/* ✅ Mobile Card View */}
       <div className="lg:hidden space-y-4">
         {records.map((record, index) => (
           <Card 
@@ -328,37 +239,14 @@ export default function DetailedReportTable({ records, loading, onRefresh }) {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col gap-2">
-              <ActionButtons
-                onUpdate={() => handleUpdate(record)}
-                onCertificate={() => handleCertificate(record)}
-                onDelete={() => handleDeleteClick(record)}
-                loading={actionLoading !== null}
-                loadingAction={
-                  actionLoading === `update-${record.id}`
-                    ? 'update'
-                    : actionLoading === `certificate-${record.id}`
-                    ? 'certificate'
-                    : actionLoading === `delete-${record.id}`
-                    ? 'delete'
-                    : null
-                }
-                compact={false}
-              />
-            </div>
+            <ActionButtons
+              record={record}
+              onRefresh={onRefresh}
+              compact={false}
+            />
           </Card>
         ))}
       </div>
-
-      {/* Delete Confirmation Dialog */}
-      <ConfirmDeleteDialog
-        open={deleteDialog.open}
-        onOpenChange={(open) => setDeleteDialog({ open, record: null })}
-        onConfirm={confirmDelete}
-        welderName={deleteDialog.record?.welder?.welder_name}
-        certificateNo={deleteDialog.record?.welder?.certificate_no}
-        loading={actionLoading?.startsWith('delete')}
-      />
     </>
   )
 }

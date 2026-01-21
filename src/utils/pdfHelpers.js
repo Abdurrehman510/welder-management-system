@@ -1,23 +1,21 @@
+// src/utils/pdfHelpers.js - FIXED QR CODE LOGIC
 import { format, parseISO, isValid } from 'date-fns'
 
 /**
- * PDF Helper Utilities - FIXED VERSION
- * ✅ Fixed test types mapping
- * ✅ Fixed checkbox/radio data handling
+ * PDF Helper Utilities - UPDATED WITH CORRECT QR LOGIC
+ * ✅ Form1 QR → Points to Certificate verification
+ * ✅ Certificate QR → Points to Form1 verification
  */
 
-/**
- * Format date for PDF display
- */
 export const formatDate = (date, formatStr = 'dd MMM yyyy') => {
   if (!date) return 'N/A'
   
   try {
-    const dateObj = typeof date === 'string' ? parseISO(date) : date
+    const dateObj = typeof date === 'string' ? parseISO(date) : new Date(date)
     if (!isValid(dateObj)) return 'N/A'
     return format(dateObj, formatStr)
   } catch (error) {
-    console.error('Date formatting error:', error)
+    console.warn('Date formatting error:', error)
     return 'N/A'
   }
 }
@@ -25,19 +23,14 @@ export const formatDate = (date, formatStr = 'dd MMM yyyy') => {
 export const formatCertDate = (date) => formatDate(date, 'dd MMM yyyy')
 export const formatFormDate = (date) => formatDate(date, 'dd MMM yyyy')
 
-/**
- * Safe field value getter
- */
 export const safeValue = (value, defaultValue = 'N/A') => {
   if (value === null || value === undefined || value === '') {
     return defaultValue
   }
-  return String(value).trim() || defaultValue
+  const strValue = String(value).trim()
+  return strValue || defaultValue
 }
 
-/**
- * Truncate long text for PDF display
- */
 export const truncateText = (text, maxLength = 100) => {
   if (!text) return 'N/A'
   const str = String(text)
@@ -45,9 +38,6 @@ export const truncateText = (text, maxLength = 100) => {
   return str.substring(0, maxLength - 3) + '...'
 }
 
-/**
- * Get welder initials from name
- */
 export const getInitials = (name) => {
   if (!name) return 'WL'
   const parts = name.trim().split(' ')
@@ -57,9 +47,6 @@ export const getInitials = (name) => {
   return name.substring(0, 2).toUpperCase()
 }
 
-/**
- * Format test results for PDF (ensures 6 rows)
- */
 export const formatTestResults = (testResults) => {
   const defaultResults = Array(6).fill({ type: 'None', result: 'None' })
   
@@ -73,16 +60,7 @@ export const formatTestResults = (testResults) => {
   })).concat(defaultResults).slice(0, 6)
 }
 
-/**
- * ✅ FIXED: Format test types checkboxes
- * Maps database values to PDF checkbox states
- * 
- * Database format: ["side", "transverse", "plate", "pipe-macro", "pipe"]
- * PDF format: { sideBend: true, transverseBend: true, ... }
- */
 export const formatTestTypes = (testTypes) => {
-  console.log('🔧 formatTestTypes input:', testTypes)
-  
   const defaultTypes = {
     transverseBend: false,
     longitudinalBend: false,
@@ -94,11 +72,9 @@ export const formatTestTypes = (testTypes) => {
   }
 
   if (!testTypes || !Array.isArray(testTypes) || testTypes.length === 0) {
-    console.log('❌ No test types found, returning all false')
     return defaultTypes
   }
 
-  // ✅ MAPPING: Database keys → PDF checkbox keys
   const mapping = {
     'side': 'sideBend',
     'transverse': 'transverseBend',
@@ -111,24 +87,16 @@ export const formatTestTypes = (testTypes) => {
 
   const result = { ...defaultTypes }
 
-  // Convert database format to checkbox format
   testTypes.forEach(dbKey => {
     const pdfKey = mapping[dbKey]
     if (pdfKey) {
       result[pdfKey] = true
-      console.log(`✓ Mapped "${dbKey}" → "${pdfKey}" = true`)
-    } else {
-      console.warn(`⚠️ Unknown test type: "${dbKey}"`)
     }
   })
 
-  console.log('✅ formatTestTypes output:', result)
   return result
 }
 
-/**
- * Transform welder data for Form1 PDF
- */
 export const transformForm1Data = (welderData) => {
   if (!welderData) return null
 
@@ -136,15 +104,7 @@ export const transformForm1Data = (welderData) => {
   const wpq = welderData.wpq_records?.[0] || welderData.wpqRecord || {}
   const continuity = welderData.continuity_records || welderData.continuityRecords || []
 
-  console.log('🔄 Transforming Form1 data...')
-  console.log('   - Welder:', welder.welder_name)
-  console.log('   - WPQ test_types (raw):', wpq.test_types)
-  console.log('   - Plate/Pipe type:', wpq.plate_pipe_type)
-  console.log('   - Process 1 3-layers:', wpq.process1_3layers_minimum, typeof wpq.process1_3layers_minimum)
-  console.log('   - Process 2 3-layers:', wpq.process2_3layers_minimum, typeof wpq.process2_3layers_minimum)
-
   return {
-    // Basic Info
     clientContractor: safeValue(welder.client_contractor),
     clientNameShort: safeValue(welder.client_name_short),
     welderName: safeValue(welder.welder_name),
@@ -158,19 +118,15 @@ export const transformForm1Data = (welderData) => {
     dateOfBirth: formatFormDate(welder.date_of_birth),
     dateOfJoining: formatFormDate(welder.date_of_joining),
     signatureUrl: welder.signature_url || null,
-
-    // Test Description
     wpsIdentification: safeValue(wpq.wps_identification),
     wpsType: safeValue(wpq.wps_identification_type),
     baseMetalSpec: safeValue(wpq.base_metal_specification),
     thickness: wpq.thickness_mm ? `${wpq.thickness_mm} mm` : 'N/A',
-
-    // Testing Variables Part 1
     weldingProcessesActual: safeValue(wpq.welding_processes_actual),
     weldingProcessesRange: safeValue(wpq.welding_processes_range),
     weldingTypeActual: safeValue(wpq.welding_type_actual),
     weldingTypeRange: safeValue(wpq.welding_type_range),
-    platePipeType: safeValue(wpq.plate_pipe_type, 'pipe'), // ✅ Default to 'pipe' if missing
+    platePipeType: safeValue(wpq.plate_pipe_type, 'pipe'),
     backingTypeActual: safeValue(wpq.backing_type_actual),
     backingTypeRange: safeValue(wpq.backing_type_range),
     platePipeActual: safeValue(wpq.plate_pipe_actual),
@@ -185,16 +141,14 @@ export const transformForm1Data = (welderData) => {
     electrodeClassificationRange: safeValue(wpq.electrode_classification_range),
     fillerMetalFnoActual: safeValue(wpq.filler_metal_fno_actual),
     fillerMetalFnoRange: safeValue(wpq.filler_metal_fno_range),
-
-    // Testing Variables Part 2
     consumableInsertActual: safeValue(wpq.consumable_insert_actual),
     consumableInsertRange: safeValue(wpq.consumable_insert_range),
     fillerProductFormActual: safeValue(wpq.filler_product_form_actual),
     fillerProductFormRange: safeValue(wpq.filler_product_form_range),
     process1: safeValue(wpq.process1),
-    process1_3layers: wpq.process1_3layers_minimum === true, // ✅ Strict boolean check
+    process1_3layers: wpq.process1_3layers_minimum === true,
     process2: safeValue(wpq.process2),
-    process2_3layers: wpq.process2_3layers_minimum === true, // ✅ Strict boolean check
+    process2_3layers: wpq.process2_3layers_minimum === true,
     depositedThicknessActual: safeValue(wpq.deposited_thickness_actual),
     depositedThicknessRange: safeValue(wpq.deposited_thickness_range),
     process1Actual: safeValue(wpq.process1_actual),
@@ -213,8 +167,6 @@ export const transformForm1Data = (welderData) => {
     transferModeRange: safeValue(wpq.transfer_mode_range),
     gtawPolarityActual: safeValue(wpq.gtaw_polarity_actual),
     gtawPolarityRange: safeValue(wpq.gtaw_polarity_range),
-
-    // Results - ✅ FIXED: Use corrected formatTestTypes function
     visualExam: safeValue(wpq.visual_exam_complete),
     testTypes: formatTestTypes(wpq.test_types),
     testResults: formatTestResults(wpq.test_results),
@@ -232,8 +184,6 @@ export const transformForm1Data = (welderData) => {
     mechanicalTestsConductor: safeValue(wpq.mechanical_tests_conduct),
     testCertNo: safeValue(wpq.test_cert_no),
     weldingSupervisedBy: safeValue(wpq.welding_supervised_by),
-
-    // Certification
     codeYear: safeValue(wpq.code_year, new Date().getFullYear().toString()),
     certifiedDate: formatFormDate(wpq.certified_date),
     certifiedName: safeValue(wpq.certified_print_name),
@@ -244,8 +194,6 @@ export const transformForm1Data = (welderData) => {
     clientRepName: safeValue(wpq.client_rep_name),
     formNo: safeValue(wpq.form_no),
     dateOfIssue: formatFormDate(wpq.date_of_issue),
-
-    // Continuity Records
     continuityRecords: continuity.map(record => ({
       date: formatFormDate(record.continuity_date),
       verifierName: safeValue(record.verifier_name),
@@ -258,9 +206,6 @@ export const transformForm1Data = (welderData) => {
   }
 }
 
-/**
- * Transform welder data for Form2 PDF (Continuity Record)
- */
 export const transformForm2Data = (welderData) => {
   if (!welderData) return null
 
@@ -290,53 +235,164 @@ export const transformForm2Data = (welderData) => {
 }
 
 /**
- * Transform welder data for Certificate PDF (ID Card)
+ * Transform welder data for Certificate PDF
  */
 export const transformCertificateData = (welderData) => {
-  if (!welderData) return null
+  if (!welderData) {
+    console.error('❌ No data provided for certificate')
+    return null
+  }
 
   const welder = welderData.welder || welderData
   const wpq = welderData.wpq_records?.[0] || welderData.wpqRecord || {}
 
-  return {
-    certificateNo: safeValue(welder.certificate_no),
+  console.log('🔄 Transform Certificate - Input:', {
+    welderName: welder?.welder_name,
+    certificateNo: welder?.certificate_no,
+    hasWpqData: !!wpq,
+    wpqKeys: Object.keys(wpq || {})
+  })
+
+  const certificateNo = safeValue(welder.certificate_no)
+  
+  // Build qualifications array with fallback values
+  const qualifications = [
+    {
+      variable: 'Welding Process',
+      actual: safeValue(wpq.welding_processes_actual, ''),
+      range: safeValue(wpq.welding_processes_range, '')
+    },
+    {
+      variable: 'TYPE(Manual/Semi/Auto)',
+      actual: safeValue(wpq.welding_type_actual, ''),
+      range: safeValue(wpq.welding_type_range, '')
+    },
+    {
+      variable: 'P No',
+      actual: safeValue(wpq.base_metal_pno_actual, ''),
+      range: safeValue(wpq.base_metal_pno_range, '')
+    },
+    {
+      variable: 'DIAMETER(TUBE)',
+      actual: wpq.plate_pipe_actual ? safeValue(wpq.plate_pipe_actual, '') : 
+             (wpq.thickness_mm ? `Ø ${wpq.thickness_mm}mm` : ''),
+      range: safeValue(wpq.plate_pipe_range, '')
+    },
+    {
+      variable: 'THICKNESS(TUBE)',
+      actual: wpq.thickness_mm ? `${wpq.thickness_mm} mm` : '',
+      range: wpq.thickness_mm ? `Up to ${wpq.thickness_mm} mm` : ''
+    },
+    {
+      variable: 'LIGAMENT SIZE',
+      actual: '',
+      range: ''
+    },
+    {
+      variable: 'GROOVE TYPE',
+      actual: '',
+      range: ''
+    },
+    {
+      variable: 'DEPTH OF GROOVE',
+      actual: '',
+      range: ''
+    },
+    {
+      variable: 'FILLER METAL CLASS & F NO',
+      actual: safeValue(wpq.filler_metal_fno_actual, ''),
+      range: safeValue(wpq.filler_metal_fno_range, '')
+    },
+    {
+      variable: 'FILLER METAL PRODUCT FORM',
+      actual: safeValue(wpq.filler_product_form_actual, ''),
+      range: safeValue(wpq.filler_product_form_range, '')
+    },
+    {
+      variable: 'BACKING (WITH, WITHOUT)',
+      actual: safeValue(wpq.backing_type_actual, ''),
+      range: safeValue(wpq.backing_type_range, '')
+    },
+    {
+      variable: 'POSITION',
+      actual: safeValue(wpq.position_actual, ''),
+      range: safeValue(wpq.position_range, '')
+    },
+    {
+      variable: 'PROGRESSION',
+      actual: safeValue(wpq.vertical_progression_actual, ''),
+      range: safeValue(wpq.vertical_progression_range, '')
+    },
+    {
+      variable: 'CURRENT LEVEL(1st Layer, Ø1.6MM)',
+      actual: safeValue(wpq.process1_actual, ''),
+      range: safeValue(wpq.process1_range, '')
+    },
+    {
+      variable: 'CURRENT LEVEL(2nd Layer, Ø1.6MM)',
+      actual: safeValue(wpq.process2_actual, ''),
+      range: safeValue(wpq.process2_range, '')
+    },
+    {
+      variable: 'PREPLACED FILLER METAL',
+      actual: '',
+      range: ''
+    },
+    {
+      variable: 'INERT GAS BACKING(GTAW)',
+      actual: safeValue(wpq.inert_gas_backing_actual, ''),
+      range: safeValue(wpq.inert_gas_backing_range, '')
+    },
+    {
+      variable: 'CURRENT & POLARITY(GTAW)',
+      actual: safeValue(wpq.gtaw_polarity_actual, ''),
+      range: safeValue(wpq.gtaw_polarity_range, '')
+    }
+  ]
+
+  console.log('✅ Qualifications built:', qualifications.length, 'rows')
+
+  const result = {
+    // Required for validation
+    certificateNo: certificateNo,
     welderName: safeValue(welder.welder_name),
     iqamaPassport: safeValue(welder.iqama_passport_no),
-    symbolStampNo: safeValue(welder.symbol_stamp_no),
-    inspectorName: safeValue(wpq.certified_print_name),
+
+    // Front page
+    cardNo: `W.Q.T - ${certificateNo}`,
+    welderNo: safeValue(welder.symbol_stamp_no),
+    company: safeValue(welder.client_contractor, 'International Systems & Solutions'),
+    inspectorName: safeValue(wpq.certified_print_name, 'Quality Control Inspector'),
     cswipCertNo: safeValue(wpq.certified_by_cert_no),
-    qcName: safeValue(wpq.reviewed_by_name),
+    clientRep: safeValue(wpq.client_rep_name, 'Client Representative'),
     photoUrl: welder.photo_url || null,
-    wpsIdentification: safeValue(wpq.wps_identification),
-    symbolStamp: safeValue(welder.symbol_stamp_no),
-    date: formatCertDate(wpq.date_welded),
-    processActual: safeValue(wpq.welding_processes_actual),
-    typeActual: safeValue(wpq.welding_type_actual),
-    pNumberActual: safeValue(wpq.base_metal_pno_actual),
-    fNumberActual: safeValue(wpq.filler_metal_fno_actual),
-    fillerMetalActual: safeValue(wpq.filler_product_form_actual),
-    backingActual: safeValue(wpq.backing_type_actual),
-    positionActual: safeValue(wpq.position_actual),
-    progressionActual: safeValue(wpq.vertical_progression_actual),
-    gasBackingActual: safeValue(wpq.inert_gas_backing_actual),
-    polarityActual: safeValue(wpq.gtaw_polarity_actual),
-    processRange: safeValue(wpq.welding_processes_range),
-    typeRange: safeValue(wpq.welding_type_range),
-    pNumberRange: safeValue(wpq.base_metal_pno_range),
-    fNumberRange: safeValue(wpq.filler_metal_fno_range),
-    fillerMetalRange: safeValue(wpq.filler_product_form_range),
-    backingRange: safeValue(wpq.backing_type_range),
-    positionRange: safeValue(wpq.position_range),
-    progressionRange: safeValue(wpq.vertical_progression_range),
-    gasBackingRange: safeValue(wpq.inert_gas_backing_range),
-    polarityRange: safeValue(wpq.gtaw_polarity_range),
-    validityDate: formatCertDate(wpq.date_of_issue)
+    signatureUrl: welder.signature_url || null,
+    
+    // Back page
+    testingWONo: safeValue(wpq.testing_wo_no),
+    symbolIDNo: safeValue(welder.symbol_stamp_no),
+    wpsNo: safeValue(wpq.wps_identification, 'WPS-001'),
+    dateWelded: formatCertDate(wpq.date_welded),
+    
+    // Qualifications array
+    qualifications: qualifications,
+    
+    // Footer
+    formNo: safeValue(wpq.form_no, '001'),
+    footerText: "This card on its own qualifies the welder for 6 months from the date of welded. Beyond the date welding records must be verified to ensure the welder's qualification has been maintained.",
+    footerDate: `Date: ${formatCertDate(wpq.date_of_issue || new Date())}`
   }
+
+  console.log('✅ Certificate data complete:', {
+    welderName: result.welderName,
+    certificateNo: result.certificateNo,
+    hasQualifications: !!result.qualifications,
+    qualCount: result.qualifications?.length
+  })
+
+  return result
 }
 
-/**
- * Validate PDF data before generation
- */
 export const validatePDFData = (data, pdfType) => {
   const errors = []
 
@@ -347,7 +403,7 @@ export const validatePDFData = (data, pdfType) => {
 
   const requiredFields = {
     form1: ['certificateNo', 'welderName', 'iqamaPassport'],
-    form2: ['certificateNo', 'welderName', 'wpsNo'],
+    form2: ['certificateNo', 'welderName'],
     certificate: ['certificateNo', 'welderName', 'iqamaPassport']
   }
 
@@ -366,10 +422,30 @@ export const validatePDFData = (data, pdfType) => {
 }
 
 /**
- * Generate QR code data URL for certificate verification
+ * ✅ FIXED: Generate QR verification URLs
+ * Form1 QR → Points to Certificate verification page
+ * Certificate QR → Points to Form1 verification page
  */
-export const generateQRVerificationURL = (certificateNo, welderName) => {
+
+// Generate QR for Form1 PDF → Should open Certificate
+export const generateForm1QRCode = (certificateNo) => {
   const baseUrl = import.meta.env.VITE_APP_URL || 'http://localhost:5173'
-  const verificationUrl = `${baseUrl}/verify/${encodeURIComponent(certificateNo)}`
+  const encodedCertNo = encodeURIComponent(certificateNo)
+  const verificationUrl = `${baseUrl}/verify/certificate/${encodedCertNo}`
+  console.log('📋 Form1 QR URL (opens Certificate):', verificationUrl)
   return verificationUrl
+}
+
+// Generate QR for Certificate PDF → Should open Form1
+export const generateCertificateQRCode = (certificateNo) => {
+  const baseUrl = import.meta.env.VITE_APP_URL || 'http://localhost:5173'
+  const encodedCertNo = encodeURIComponent(certificateNo)
+  const verificationUrl = `${baseUrl}/verify/form1/${encodedCertNo}`
+  console.log('🎴 Certificate QR URL (opens Form1):', verificationUrl)
+  return verificationUrl
+}
+
+// Backward compatibility - defaults to Form1 QR behavior
+export const generateQRVerificationURL = (certificateNo, welderName) => {
+  return generateForm1QRCode(certificateNo)
 }

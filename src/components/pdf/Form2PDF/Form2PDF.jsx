@@ -650,7 +650,7 @@ export default function Form2PDF({ data }) {
             })} | Certificate: {data.certificateNo}
           </Text>
         </View>
-
+        
         {/* ═══════════════════════════════════════════════════════════════ */}
         {/* PAGE FOOTER (Fixed)                                             */}
         {/* ═══════════════════════════════════════════════════════════════ */}

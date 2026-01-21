@@ -6,6 +6,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import { Toaster } from 'sonner'
 import './styles/globals.css'
 
+
 /**
  * ✅ FIXED: Added Sonner Toaster for toast notifications
  * ✅ Position: top-right

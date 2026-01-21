@@ -1,3 +1,4 @@
+// src/router.jsx - UPDATED WITH VERIFICATION ROUTES
 import { createBrowserRouter } from 'react-router-dom';
 import App from './App';
 import Login from './pages/Login';
@@ -12,13 +13,31 @@ import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import TestPage from './pages/TestPage';
 import AuthTest from './pages/AuthTest';
-import TestDataExtractor from './pages/TestDataExtractor'; // ADD THIS
+import TestDataExtractor from './pages/TestDataExtractor';
+import TestCertificatePage from './pages/TestCertificatePage';
+
+// NEW: Verification Pages for QR Code Scanning
+import VerifyForm1Page from './pages/VerifyForm1Page';
+import VerifyCertificatePage from './pages/VerifyCertificatePage';
 
 export const router = createBrowserRouter([
+  // Public Routes
   {
     path: '/login',
     element: <Login />,
   },
+
+  // QR Code Verification Routes (Public - No Authentication Required)
+  {
+    path: '/verify/form1/:certificateNo',
+    element: <VerifyForm1Page />,
+  },
+  {
+    path: '/verify/certificate/:certificateNo',
+    element: <VerifyCertificatePage />,
+  },
+
+  // Protected Routes (Require Authentication)
   {
     path: '/',
     element: <ProtectedRoute><App /></ProtectedRoute>,
@@ -60,11 +79,17 @@ export const router = createBrowserRouter([
         element: <AuthTest />,
       },
       {
-        path: 'test-data-extractor', // ADD THIS
+        path: 'test-data-extractor',
         element: <TestDataExtractor />,
+      },
+      {
+        path: 'test-certificate',
+        element: <TestCertificatePage />,
       },
     ],
   },
+
+  // 404 Not Found
   {
     path: '*',
     element: <NotFound />,
