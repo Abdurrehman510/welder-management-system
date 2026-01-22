@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo, useEffect } from 'react'
 
 /**
  * Custom hook to manage Form1 state and logic
- * NOW WITH FORM PERSISTENCE: Saves to localStorage and restores on page load
+ * ✅ WITH: Form persistence + 3 new signature fields
  */
 
 const STORAGE_KEY = 'welder_form1_draft'
@@ -141,10 +141,22 @@ const getInitialFormData = () => {
       certifiedDate: '',
       certifiedName: '',
       certifiedCertNo: '',
+      // ✅ NEW: Certifier signature fields
+      certifierSignature: null,
+      certifierSignatureUrl: null,
+      certifierSignaturePreview: null,
       reviewedDate: '',
       reviewedName: '',
+      // ✅ NEW: Reviewer signature fields
+      reviewerSignature: null,
+      reviewerSignatureUrl: null,
+      reviewerSignaturePreview: null,
       clientRepDate: '',
       clientRepName: '',
+      // ✅ NEW: Client rep signature fields
+      clientRepSignature: null,
+      clientRepSignatureUrl: null,
+      clientRepSignaturePreview: null,
       formNo: '',
       dateOfIssue: '',
     },
@@ -163,7 +175,7 @@ export function useForm1State() {
           ...formData,
           basicInfo: {
             ...formData.basicInfo,
-            photo: null, // Don't store File objects
+            photo: null,
             signature: null,
           },
           continuity: {
@@ -173,6 +185,10 @@ export function useForm1State() {
               verifierSignature: null,
               qcSignature: null,
             })),
+            // ✅ Exclude File objects for signatures
+            certifierSignature: null,
+            reviewerSignature: null,
+            clientRepSignature: null,
           },
         }
         
@@ -202,6 +218,17 @@ export function useForm1State() {
     }
     if (formData.basicInfo.signatureUrl && formData.basicInfo.signatureUrl.startsWith('blob:')) {
       URL.revokeObjectURL(formData.basicInfo.signatureUrl)
+    }
+    
+    // ✅ Revoke signature URLs
+    if (formData.continuity.certifierSignaturePreview?.startsWith('blob:')) {
+      URL.revokeObjectURL(formData.continuity.certifierSignaturePreview)
+    }
+    if (formData.continuity.reviewerSignaturePreview?.startsWith('blob:')) {
+      URL.revokeObjectURL(formData.continuity.reviewerSignaturePreview)
+    }
+    if (formData.continuity.clientRepSignaturePreview?.startsWith('blob:')) {
+      URL.revokeObjectURL(formData.continuity.clientRepSignaturePreview)
     }
     
     formData.continuity.continuityRecords.forEach(record => {
@@ -338,10 +365,19 @@ export function useForm1State() {
         certifiedDate: '',
         certifiedName: '',
         certifiedCertNo: '',
+        certifierSignature: null,
+        certifierSignatureUrl: null,
+        certifierSignaturePreview: null,
         reviewedDate: '',
         reviewedName: '',
+        reviewerSignature: null,
+        reviewerSignatureUrl: null,
+        reviewerSignaturePreview: null,
         clientRepDate: '',
         clientRepName: '',
+        clientRepSignature: null,
+        clientRepSignatureUrl: null,
+        clientRepSignaturePreview: null,
         formNo: '',
         dateOfIssue: '',
       },

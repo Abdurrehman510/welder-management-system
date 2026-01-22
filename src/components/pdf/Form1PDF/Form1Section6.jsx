@@ -1,10 +1,10 @@
 // ========== Form1Section6.jsx ==========
-import { View, Text } from '@react-pdf/renderer'
+import { View, Text, Image } from '@react-pdf/renderer'
 import { form1Styles } from './form1Styles'
 
 /**
- * Form1 Section 6: Certification Block - ENHANCED
- * Professional certification section with ASME compliance
+ * Form1 Section 6: Certification Block with Signatures
+ * ✅ NOW WITH: All 3 signature displays (Certifier, Reviewer, Client Rep)
  */
 
 export default function Form1Section6({ data }) {
@@ -31,7 +31,11 @@ export default function Form1Section6({ data }) {
 
         <View style={form1Styles.divider} />
 
-        {/* Certified By */}
+        {/* ✅ WITNESSED & CERTIFIED BY - With Signature */}
+        <Text style={{fontSize: 11, fontWeight: 'bold', marginBottom: 8, color: '#1e40af'}}>
+          Witnessed & Certified By
+        </Text>
+        
         <View style={form1Styles.certificationRow}>
           <View style={form1Styles.certificationField}>
             <Text style={form1Styles.certificationLabel}>Certified Date</Text>
@@ -54,11 +58,38 @@ export default function Form1Section6({ data }) {
               {data.certifiedCertNo || 'N/A'}
             </Text>
           </View>
+          
+          {/* ✅ CERTIFIER SIGNATURE */}
+          <View style={form1Styles.certificationField}>
+            <Text style={form1Styles.certificationLabel}>Signature</Text>
+            {data.certifierSignatureUrl ? (
+              <Image 
+                src={data.certifierSignatureUrl} 
+                style={{
+                  maxWidth: 120,
+                  maxHeight: 40,
+                  objectFit: 'contain',
+                  marginTop: 4,
+                  border: '1px solid #e5e7eb',
+                  padding: 4,
+                  backgroundColor: '#ffffff'
+                }}
+              />
+            ) : (
+              <Text style={{fontSize: 9, color: '#9ca3af', marginTop: 4}}>
+                No signature
+              </Text>
+            )}
+          </View>
         </View>
 
         <View style={form1Styles.divider} />
 
-        {/* Reviewed By */}
+        {/* ✅ REVIEWED BY - With Signature */}
+        <Text style={{fontSize: 11, fontWeight: 'bold', marginBottom: 8, color: '#1e40af'}}>
+          Reviewed By
+        </Text>
+        
         <View style={form1Styles.certificationRow}>
           <View style={form1Styles.certificationField}>
             <Text style={form1Styles.certificationLabel}>Reviewed Date</Text>
@@ -74,9 +105,36 @@ export default function Form1Section6({ data }) {
           </View>
         </View>
 
+        {/* ✅ REVIEWER SIGNATURE */}
+        <View style={{marginTop: 8}}>
+          <Text style={form1Styles.certificationLabel}>Reviewer Signature</Text>
+          {data.reviewerSignatureUrl ? (
+            <Image 
+              src={data.reviewerSignatureUrl} 
+              style={{
+                maxWidth: 120,
+                maxHeight: 40,
+                objectFit: 'contain',
+                marginTop: 4,
+                border: '1px solid #e5e7eb',
+                padding: 4,
+                backgroundColor: '#ffffff'
+              }}
+            />
+          ) : (
+            <Text style={{fontSize: 9, color: '#9ca3af', marginTop: 4}}>
+              No signature
+            </Text>
+          )}
+        </View>
+
         <View style={form1Styles.divider} />
 
-        {/* Client Representative */}
+        {/* ✅ CLIENT REPRESENTATIVE - With Signature */}
+        <Text style={{fontSize: 11, fontWeight: 'bold', marginBottom: 8, color: '#1e40af'}}>
+          Client / Contractor Representative
+        </Text>
+        
         <View style={form1Styles.certificationRow}>
           <View style={form1Styles.certificationField}>
             <Text style={form1Styles.certificationLabel}>Client Rep. Date</Text>
@@ -90,6 +148,29 @@ export default function Form1Section6({ data }) {
               {data.clientRepName || 'N/A'}
             </Text>
           </View>
+        </View>
+
+        {/* ✅ CLIENT REP SIGNATURE */}
+        <View style={{marginTop: 8}}>
+          <Text style={form1Styles.certificationLabel}>Client Rep Signature</Text>
+          {data.clientRepSignatureUrl ? (
+            <Image 
+              src={data.clientRepSignatureUrl} 
+              style={{
+                maxWidth: 120,
+                maxHeight: 40,
+                objectFit: 'contain',
+                marginTop: 4,
+                border: '1px solid #e5e7eb',
+                padding: 4,
+                backgroundColor: '#ffffff'
+              }}
+            />
+          ) : (
+            <Text style={{fontSize: 9, color: '#9ca3af', marginTop: 4}}>
+              No signature
+            </Text>
+          )}
         </View>
 
         <View style={form1Styles.divider} />

@@ -3,7 +3,7 @@ import { z } from 'zod'
 /**
  * Form1 Validation Schemas using Zod
  * Complete validation rules for Welder Management System Form1
- * FINAL VERSION: All fields included with proper validation
+ * ✅ FIXED: Flexible thickness validation to handle all number formats
  */
 
 // ============================================
@@ -54,7 +54,7 @@ export const basicInfoSchema = z.object({
       return !isNaN(d.getTime()) && d < new Date()
     }, 'Date of birth must be in the past'),
   
-  // Optional fields - IMPORTANT: Allow File objects and null values
+  // Optional fields
   designation: z.string().max(100).optional().or(z.literal('')),
   
   dateOfJoining: z.string()
@@ -66,18 +66,19 @@ export const basicInfoSchema = z.object({
       return !isNaN(d.getTime())
     }, 'Invalid date format'),
   
-  // File upload fields - must allow File objects, URLs, and null
+  // File upload fields
   photoUrl: z.string().url().optional().or(z.literal('')).nullable(),
   signatureUrl: z.string().url().optional().or(z.literal('')).nullable(),
-  photo: z.any().optional().nullable(), // Allow File object
-  signature: z.any().optional().nullable(), // Allow File object
+  photo: z.any().optional().nullable(),
+  signature: z.any().optional().nullable(),
 })
 
 // ============================================
 // SECTION 2: TEST DESCRIPTION
+// ✅ FIXED: Flexible thickness validation
 // ============================================
 export const testDescriptionSchema = z.object({
-  // Required fields (3 total: wpsIdentification, wpsType, baseMetalSpec)
+  // Required fields
   wpsIdentification: z.string()
     .min(1, 'WPS Identification is required')
     .max(100, 'WPS Identification too long'),
@@ -90,21 +91,44 @@ export const testDescriptionSchema = z.object({
     .min(1, 'Base metal specification is required')
     .max(100, 'Base metal specification too long'),
   
-  // Optional field
-  thicknessMm: z.string()
-    .optional()
-    .or(z.literal(''))
-    .refine((val) => {
-      if (!val || val === '') return true
-      const num = parseFloat(val)
-      return !isNaN(num) && num > 0
-    }, 'Thickness must be a positive number'),
+  // ✅ FIXED: Optional thickness field with flexible validation
+  // Accepts: numbers, decimals (8.56, 8.5, 8), integers (8), or empty string
+  thicknessMm: z.union([
+    z.string().optional(),
+    z.number(),
+    z.literal(''),
+    z.null()
+  ]).transform((val) => {
+    // If empty, null, or undefined, return empty string
+    if (val === '' || val === null || val === undefined) {
+      return ''
+    }
+    
+    // If already a number, convert to string
+    if (typeof val === 'number') {
+      return val.toString()
+    }
+    
+    // Return as-is if string
+    return val
+  }).refine((val) => {
+    // Allow empty values
+    if (!val || val === '') return true
+    
+    // Convert to string and clean
+    const strVal = String(val).trim()
+    if (strVal === '') return true
+    
+    // Check if it's a valid number (integer or decimal)
+    // Accepts: 8, 8.5, 8.56, 25.25, 100, etc.
+    const num = parseFloat(strVal)
+    return !isNaN(num) && num > 0 && isFinite(num)
+  }, 'Thickness must be a positive number (e.g., 8, 8.5, 8.56)')
 })
 
 // ============================================
 // SECTION 3 & 4: TESTING VARIABLES
 // ============================================
-// All fields in testing variables are optional
 export const testingVarsSchema = z.object({
   // Section 3 fields
   weldingProcessesActual: z.string().optional().or(z.literal('')),
@@ -154,18 +178,16 @@ export const testingVarsSchema = z.object({
   transferModeRange: z.string().optional().or(z.literal('')),
   gtawPolarityActual: z.string().optional().or(z.literal('')),
   gtawPolarityRange: z.string().optional().or(z.literal('')),
-}).passthrough() // Allow additional fields
+}).passthrough()
 
 // ============================================
 // SECTION 5: RESULTS
 // ============================================
 export const resultsSchema = z.object({
-  // Required field (1 total: visualExam)
   visualExam: z.enum(['Accepted', 'Rejected'], {
     errorMap: () => ({ message: 'Visual examination result is required' })
   }),
   
-  // Optional fields
   testTypes: z.array(z.string()).optional(),
   
   testResults: z.array(z.object({
@@ -193,10 +215,8 @@ export const resultsSchema = z.object({
 // SECTION 6: CONTINUITY & CERTIFICATION
 // ============================================
 export const continuitySchema = z.object({
-  // Continuity records - at least one is required with date
-  // IMPORTANT: Must allow File objects and null for signature fields
   continuityRecords: z.array(z.object({
-    id: z.string().optional(), // UUID for React key
+    id: z.string().optional(),
     date: z.string()
       .min(1, 'Date is required')
       .refine((date) => {
@@ -209,14 +229,12 @@ export const continuitySchema = z.object({
     reference: z.string().optional().or(z.literal('')),
     qcName: z.string().optional().or(z.literal('')),
     
-    // Signature fields - must allow File objects, URLs, and null
     verifierSignatureUrl: z.string().url().optional().or(z.literal('')).nullable(),
     qcSignatureUrl: z.string().url().optional().or(z.literal('')).nullable(),
-    verifierSignature: z.any().optional().nullable(), // Allow File object
-    qcSignature: z.any().optional().nullable(), // Allow File object
+    verifierSignature: z.any().optional().nullable(),
+    qcSignature: z.any().optional().nullable(),
   })).min(1, 'At least one continuity record is required'),
   
-  // Required certification fields (4 total: codeYear, certifiedDate, certifiedName, formNo)
   codeYear: z.string()
     .min(1, 'Code year is required')
     .regex(/^[0-9]{4}$/, 'Code year must be a 4-digit year'),
@@ -236,7 +254,6 @@ export const continuitySchema = z.object({
     .min(1, 'Form number is required')
     .max(50, 'Form number too long'),
   
-  // Optional certification fields
   certifiedCertNo: z.string().max(100).optional().or(z.literal('')),
   
   reviewedDate: z.string()
@@ -287,15 +304,8 @@ export const form1Schema = z.object({
 // VALIDATION HELPER FUNCTIONS
 // ============================================
 
-/**
- * Validate a specific section of the form
- * @param {string} sectionName - Name of the section to validate
- * @param {Object} data - Data to validate
- * @returns {{success: boolean, errors: Object}}
- */
 export const validateSection = (sectionName, data) => {
   try {
-    // Handle undefined or null data
     if (!data) {
       return { 
         success: false, 
@@ -333,7 +343,6 @@ export const validateSection = (sectionName, data) => {
     if (error instanceof z.ZodError) {
       const errors = {}
       
-      // Process Zod validation errors
       if (error.errors && Array.isArray(error.errors)) {
         error.errors.forEach((err) => {
           const path = err.path.join('.')
@@ -345,7 +354,6 @@ export const validateSection = (sectionName, data) => {
       return { success: false, errors }
     }
     
-    // Handle unexpected errors
     console.error('Validation error:', error)
     return { 
       success: false, 
@@ -356,11 +364,6 @@ export const validateSection = (sectionName, data) => {
   }
 }
 
-/**
- * Validate the complete form
- * @param {Object} formData - Complete form data
- * @returns {{success: boolean, errors: Object}}
- */
 export const validateCompleteForm = (formData) => {
   try {
     form1Schema.parse(formData)
@@ -369,7 +372,6 @@ export const validateCompleteForm = (formData) => {
     if (error instanceof z.ZodError) {
       const errors = {}
       
-      // Group errors by section
       error.errors.forEach((err) => {
         const [section, ...rest] = err.path
         if (!errors[section]) {
@@ -392,11 +394,6 @@ export const validateCompleteForm = (formData) => {
   }
 }
 
-/**
- * Get friendly error messages for display
- * @param {Object} errors - Error object from validation
- * @returns {Array<string>} Array of error messages
- */
 export const getErrorMessages = (errors) => {
   const messages = []
   
@@ -414,29 +411,17 @@ export const getErrorMessages = (errors) => {
   return messages
 }
 
-/**
- * Check if a section has errors
- * @param {Object} errors - Error object
- * @param {string} sectionName - Section to check
- * @returns {boolean}
- */
 export const hasSectionErrors = (errors, sectionName) => {
   return errors[sectionName] && Object.keys(errors[sectionName]).length > 0
 }
 
-// ============================================
-// EXPORT DEFAULT
-// ============================================
 export default {
-  // Schemas
   basicInfoSchema,
   testDescriptionSchema,
   testingVarsSchema,
   resultsSchema,
   continuitySchema,
   form1Schema,
-  
-  // Validation functions
   validateSection,
   validateCompleteForm,
   getErrorMessages,
