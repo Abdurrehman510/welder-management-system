@@ -39,7 +39,7 @@ export default function Section1_BasicInfo({
     // Check file type
     if (!allowedTypes.includes(file.type)) {
       toast.error('Invalid File Type', {
-        description: `Please select a valid image file (JPG, PNG, or WEBP).`,
+        description: `Please select a valid image file (JPG, PNG).`,
         duration: 5000,
       })
       return false

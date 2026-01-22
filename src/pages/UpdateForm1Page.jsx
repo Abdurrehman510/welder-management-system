@@ -222,42 +222,48 @@ export default function UpdateForm1Page() {
         weldingSupervisedBy: wpq?.welding_supervised_by || "",
       },
       continuity: {
-        continuityRecords:
-          continuity.length > 0
-            ? continuity.map((record) => ({
-                id: record.id,
-                date: record.continuity_date || "",
-                verifier: record.verifier_name || "",
-                verifierSignature: null,
-                verifierSignatureUrl: record.verifier_signature_url || null,
-                company: record.company || "",
-                reference: record.reference || "",
-                qcName: record.qc_name || "",
-                qcSignature: null,
-                qcSignatureUrl: record.qc_signature_url || null,
-              }))
-            : [
-                {
-                  id: crypto.randomUUID(),
-                  date: "",
-                  verifier: "",
-                  verifierSignature: null,
-                  verifierSignatureUrl: null,
-                  company: "",
-                  reference: "",
-                  qcName: "",
-                  qcSignature: null,
-                  qcSignatureUrl: null,
-                },
-              ],
+        continuityRecords: continuity.length > 0
+          ? continuity.map((record) => ({
+              id: record.id,
+              date: record.continuity_date || "",
+              verifier: record.verifier_name || "",
+              verifierSignature: null,
+              verifierSignatureUrl: record.verifier_signature_url || null,
+              company: record.company || "",
+              reference: record.reference || "",
+              qcName: record.qc_name || "",
+              qcSignature: null,
+              qcSignatureUrl: record.qc_signature_url || null,
+            }))
+          : [{
+              id: crypto.randomUUID(),
+              date: "",
+              verifier: "",
+              verifierSignature: null,
+              verifierSignatureUrl: null,
+              company: "",
+              reference: "",
+              qcName: "",
+              qcSignature: null,
+              qcSignatureUrl: null,
+            }],
         codeYear: wpq?.code_year || new Date().getFullYear().toString(),
         certifiedDate: wpq?.certified_date || "",
         certifiedName: wpq?.certified_print_name || "",
         certifiedCertNo: wpq?.certified_by_cert_no || "",
+        certifierSignature: null,                              // ✅ NEW
+        certifierSignatureUrl: wpq?.certifier_signature_url || null,  // ✅ NEW
+        certifierSignaturePreview: null,                       // ✅ NEW
         reviewedDate: wpq?.reviewed_date || "",
         reviewedName: wpq?.reviewed_by_name || "",
+        reviewerSignature: null,                               // ✅ NEW
+        reviewerSignatureUrl: wpq?.reviewer_signature_url || null,    // ✅ NEW
+        reviewerSignaturePreview: null,                        // ✅ NEW
         clientRepDate: wpq?.client_rep_date || "",
         clientRepName: wpq?.client_rep_name || "",
+        clientRepSignature: null,                              // ✅ NEW
+        clientRepSignatureUrl: wpq?.client_rep_signature_url || null, // ✅ NEW
+        clientRepSignaturePreview: null,                       // ✅ NEW
         formNo: wpq?.form_no || "",
         dateOfIssue: wpq?.date_of_issue || "",
       },
@@ -553,10 +559,13 @@ export default function UpdateForm1Page() {
           certified_date: formData.continuity.certifiedDate || null,
           certified_print_name: formData.continuity.certifiedName || null,
           certified_by_cert_no: formData.continuity.certifiedCertNo || null,
+          certifier_signature_url: uploadedFiles.certifierSignatureUrl || formData.continuity.certifierSignatureUrl || null,  // ✅ NEW
           reviewed_date: formData.continuity.reviewedDate || null,
           reviewed_by_name: formData.continuity.reviewedName || null,
+          reviewer_signature_url: uploadedFiles.reviewerSignatureUrl || formData.continuity.reviewerSignatureUrl || null,    // ✅ NEW
           client_rep_date: formData.continuity.clientRepDate || null,
           client_rep_name: formData.continuity.clientRepName || null,
+          client_rep_signature_url: uploadedFiles.clientRepSignatureUrl || formData.continuity.clientRepSignatureUrl || null, // ✅ NEW
           form_no: formData.continuity.formNo || null,
           date_of_issue: formData.continuity.dateOfIssue || null,
         };

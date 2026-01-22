@@ -18,12 +18,17 @@ class StorageService {
   validateFile(file, type = 'photo') {
     const maxSize = type === 'photo' ? 10 * 1024 * 1024 : 10 * 1024 * 1024 // 10MB for both
     
+    // ✅ REMOVED WEBP - Only JPG, JPEG, PNG
+    const allowedMimeTypes = [
+      'image/jpeg',
+      'image/png'
+    ]
+    
     // ✅ Common image types only (no GIF, BMP, SVG, etc.)
     const allowedTypes = [
       'image/jpeg',
       'image/jpg', 
-      'image/png',
-      'image/webp'
+      'image/png',  
     ]
     
     const typeLabel = type === 'photo' ? 'Photo' : 'Signature'
@@ -40,7 +45,7 @@ class StorageService {
     if (!allowedTypes.includes(file.type.toLowerCase())) {
       return {
         valid: false,
-        error: `Invalid File Type: ${typeLabel} must be JPG, JPEG, PNG, or WEBP. Your file type: ${file.type}`
+        error: `Invalid File Type: ${typeLabel} must be JPG, JPEG, PNG. Your file type: ${file.type}`
       }
     }
 
@@ -187,15 +192,16 @@ class StorageService {
    * @returns {Array<string>} Array of allowed MIME types
    */
   getAllowedImageTypes() {
-    return ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+    return ['image/jpeg', 'image/jpg', 'image/png']
   }
+
 
   /**
    * Get human-readable list of allowed formats
    * @returns {string} Formatted string of allowed types
-   */
+   */  
   getAllowedFormatsString() {
-    return 'JPG, JPEG, PNG, WEBP'
+    return 'JPG, JPEG, PNG'
   }
 }
 

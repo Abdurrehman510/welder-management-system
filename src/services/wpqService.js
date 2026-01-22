@@ -200,10 +200,13 @@ class WPQService {
         certified_date: wpqData.certified_date || null,
         certified_print_name: wpqData.certified_print_name || null,
         certified_by_cert_no: wpqData.certified_by_cert_no || null,
+        certifier_signature_url: wpqData.certifier_signature_url || null,  // ✅ NEW
         reviewed_date: wpqData.reviewed_date || null,
         reviewed_by_name: wpqData.reviewed_by_name || null,
+        reviewer_signature_url: wpqData.reviewer_signature_url || null,    // ✅ NEW
         client_rep_date: wpqData.client_rep_date || null,
         client_rep_name: wpqData.client_rep_name || null,
+        client_rep_signature_url: wpqData.client_rep_signature_url || null, // ✅ NEW
         form_no: wpqData.form_no || null,
         date_of_issue: wpqData.date_of_issue || null,
         

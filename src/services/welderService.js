@@ -15,6 +15,9 @@ class WelderService {
     const uploadedData = {
       photoUrl: null,
       signatureUrl: null,
+      certifierSignatureUrl: null,
+      reviewerSignatureUrl: null,
+      clientRepSignatureUrl: null,
       continuitySignatures: []
     }
 
@@ -45,37 +48,82 @@ class WelderService {
         uploadedData.signatureUrl = formData.basicInfo.signatureUrl
       }
 
-      // 3. Upload continuity signatures
-      if (formData.continuity?.continuityRecords?.length > 0) {
-        console.log(`Uploading continuity signatures for ${formData.continuity.continuityRecords.length} records...`)
-        
-        for (let i = 0; i < formData.continuity.continuityRecords.length; i++) {
-          const record = formData.continuity.continuityRecords[i]
-          const uploadedRecord = { ...record }
-
-          // Upload verifier signature
-          if (record.verifierSignature && record.verifierSignature instanceof File) {
-            const { url, error } = await storageService.uploadSignature(record.verifierSignature)
-            if (error) {
-              console.error(`Verifier signature upload failed for record ${i}:`, error)
-            } else {
-              uploadedRecord.verifierSignatureUrl = url
-              console.log(`✓ Verifier signature ${i} uploaded`)
-            }
+      // ✅ FIXED: Check if continuity exists before accessing
+      if (formData.continuity) {
+        // 3. Upload certifier signature
+        if (formData.continuity.certifierSignature && formData.continuity.certifierSignature instanceof File) {
+          console.log('Uploading certifier signature...')
+          const { url, error } = await storageService.uploadSignature(formData.continuity.certifierSignature)
+          if (error) {
+            console.warn('Certifier signature upload failed:', error)
+          } else {
+            uploadedData.certifierSignatureUrl = url
+            console.log('✓ Certifier signature uploaded:', url)
           }
+        } else if (formData.continuity.certifierSignatureUrl) {
+          uploadedData.certifierSignatureUrl = formData.continuity.certifierSignatureUrl
+        }
 
-          // Upload QC signature
-          if (record.qcSignature && record.qcSignature instanceof File) {
-            const { url, error } = await storageService.uploadSignature(record.qcSignature)
-            if (error) {
-              console.error(`QC signature upload failed for record ${i}:`, error)
-            } else {
-              uploadedRecord.qcSignatureUrl = url
-              console.log(`✓ QC signature ${i} uploaded`)
-            }
+        // 4. Upload reviewer signature
+        if (formData.continuity.reviewerSignature && formData.continuity.reviewerSignature instanceof File) {
+          console.log('Uploading reviewer signature...')
+          const { url, error } = await storageService.uploadSignature(formData.continuity.reviewerSignature)
+          if (error) {
+            console.warn('Reviewer signature upload failed:', error)
+          } else {
+            uploadedData.reviewerSignatureUrl = url
+            console.log('✓ Reviewer signature uploaded:', url)
           }
+        } else if (formData.continuity.reviewerSignatureUrl) {
+          uploadedData.reviewerSignatureUrl = formData.continuity.reviewerSignatureUrl
+        }
 
-          uploadedData.continuitySignatures.push(uploadedRecord)
+        // 5. Upload client rep signature
+        if (formData.continuity.clientRepSignature && formData.continuity.clientRepSignature instanceof File) {
+          console.log('Uploading client rep signature...')
+          const { url, error } = await storageService.uploadSignature(formData.continuity.clientRepSignature)
+          if (error) {
+            console.warn('Client rep signature upload failed:', error)
+          } else {
+            uploadedData.clientRepSignatureUrl = url
+            console.log('✓ Client rep signature uploaded:', url)
+          }
+        } else if (formData.continuity.clientRepSignatureUrl) {
+          uploadedData.clientRepSignatureUrl = formData.continuity.clientRepSignatureUrl
+        }
+
+        // 6. Upload continuity signatures
+        if (formData.continuity.continuityRecords?.length > 0) {
+          console.log(`Uploading continuity signatures for ${formData.continuity.continuityRecords.length} records...`)
+          
+          for (let i = 0; i < formData.continuity.continuityRecords.length; i++) {
+            const record = formData.continuity.continuityRecords[i]
+            const uploadedRecord = { ...record }
+
+            // Upload verifier signature
+            if (record.verifierSignature && record.verifierSignature instanceof File) {
+              const { url, error } = await storageService.uploadSignature(record.verifierSignature)
+              if (error) {
+                console.error(`Verifier signature upload failed for record ${i}:`, error)
+              } else {
+                uploadedRecord.verifierSignatureUrl = url
+                console.log(`✓ Verifier signature ${i} uploaded`)
+              }
+            }
+
+            // Upload QC signature
+            if (record.qcSignature && record.qcSignature instanceof File) {
+              const { url, error } = await storageService.uploadSignature(record.qcSignature)
+              if (error) {
+                console.error(`QC signature upload failed for record ${i}:`, error)
+              } else {
+                uploadedRecord.qcSignatureUrl = url
+                console.log(`✓ QC signature ${i} uploaded`)
+              }
+            }
+
+            uploadedData.continuitySignatures.push(uploadedRecord)
+          }
         }
       }
 
@@ -232,10 +280,13 @@ class WelderService {
         certified_date: formData.continuity?.certifiedDate || null,
         certified_print_name: formData.continuity?.certifiedName || null,
         certified_by_cert_no: formData.continuity?.certifiedCertNo || null,
+        certifier_signature_url: uploadedFiles.certifierSignatureUrl || null,  // ✅ NEW
         reviewed_date: formData.continuity?.reviewedDate || null,
         reviewed_by_name: formData.continuity?.reviewedName || null,
+        reviewer_signature_url: uploadedFiles.reviewerSignatureUrl || null,    // ✅ NEW
         client_rep_date: formData.continuity?.clientRepDate || null,
         client_rep_name: formData.continuity?.clientRepName || null,
+        client_rep_signature_url: uploadedFiles.clientRepSignatureUrl || null, // ✅ NEW
         form_no: formData.continuity?.formNo || null,
         date_of_issue: formData.continuity?.dateOfIssue || null,
       }

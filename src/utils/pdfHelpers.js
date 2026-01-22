@@ -236,6 +236,7 @@ export const transformForm2Data = (welderData) => {
 
 /**
  * Transform welder data for Certificate PDF
+ * ✅ FIXED: Clean malformed URLs with extra quotes
  */
 export const transformCertificateData = (welderData) => {
   if (!welderData) {
@@ -252,6 +253,13 @@ export const transformCertificateData = (welderData) => {
     hasWpqData: !!wpq,
     wpqKeys: Object.keys(wpq || {})
   })
+
+  // ✅ FIX: Utility to clean malformed URLs
+  const cleanUrl = (url) => {
+    if (!url || typeof url !== 'string') return null
+    // Remove leading/trailing quotes and trim whitespace
+    return url.replace(/^["']|["']$/g, '').trim()
+  }
 
   const certificateNo = safeValue(welder.certificate_no)
   
@@ -365,8 +373,13 @@ export const transformCertificateData = (welderData) => {
     inspectorName: safeValue(wpq.certified_print_name, 'Quality Control Inspector'),
     cswipCertNo: safeValue(wpq.certified_by_cert_no),
     clientRep: safeValue(wpq.client_rep_name, 'Client Representative'),
-    photoUrl: welder.photo_url || null,
-    signatureUrl: welder.signature_url || null,
+    
+    // ✅ FIXED: Clean all URLs to remove extra quotes
+    photoUrl: cleanUrl(welder.photo_url),
+    signatureUrl: cleanUrl(welder.signature_url),
+    certifierSignatureUrl: cleanUrl(wpq.certifier_signature_url),
+    reviewerSignatureUrl: cleanUrl(wpq.reviewer_signature_url),
+    clientRepSignatureUrl: cleanUrl(wpq.client_rep_signature_url),
     
     // Back page
     testingWONo: safeValue(wpq.testing_wo_no),
@@ -387,7 +400,9 @@ export const transformCertificateData = (welderData) => {
     welderName: result.welderName,
     certificateNo: result.certificateNo,
     hasQualifications: !!result.qualifications,
-    qualCount: result.qualifications?.length
+    qualCount: result.qualifications?.length,
+    hasCertifierSignature: !!result.certifierSignatureUrl,
+    certifierUrl: result.certifierSignatureUrl
   })
 
   return result
@@ -449,3 +464,6 @@ export const generateCertificateQRCode = (certificateNo) => {
 export const generateQRVerificationURL = (certificateNo, welderName) => {
   return generateForm1QRCode(certificateNo)
 }
+
+
+

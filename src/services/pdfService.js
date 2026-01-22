@@ -115,52 +115,53 @@ class PDFService {
   }
 
   /**
-   * Prepare Certificate PDF data
-   * QR Code in Certificate → Points to Form1 verification page
-   * @param {Object} welderData - Welder record with WPQ
-   * @returns {Promise<Object>} Prepared data with QR code and logos
-   */
-  async prepareCertificateData(welderData) {
-    try {
-      console.log('🎴 Preparing Certificate data');
-      
-      // Transform data
-      const transformed = transformCertificateData(welderData)
-      
-      if (!transformed) {
-        throw new Error('Failed to transform certificate data')
-      }
-
-      // Validate
-      const validation = validatePDFData(transformed, 'certificate')
-      if (!validation.valid) {
-        console.warn('⚠️ Validation warnings:', validation.errors);
-        // Continue despite validation warnings for optional fields
-      }
-
-      // Generate QR code URL for Certificate → Should open Form1
-      const qrURL = generateCertificateQRCode(transformed.certificateNo)
-      const qrCode = await this.generateQRCodeFromURL(qrURL)
-
-      console.log('✅ Certificate QR → Opens Form1 at:', qrURL)
-      console.log('✅ Certificate data prepared successfully:', {
-        welderName: transformed.welderName,
-        certificateNo: transformed.certificateNo,
-        hasQRCode: !!qrCode,
-        qualCount: transformed.qualifications?.length
-      });
-
-      return {
-        ...transformed,
-        qrCode,
-        logoUrl: '/iss-logo.png',
-        watermarkUrl: '/iss_logo_fevicon.png'
-      }
-    } catch (error) {
-      console.error('❌ Certificate data preparation error:', error)
-      throw error
+ * Prepare Certificate PDF data
+ * QR Code in Certificate → Points to Form1 verification page
+ * @param {Object} welderData - Welder record with WPQ
+ * @returns {Promise<Object>} Prepared data with QR code and logos
+ */
+async prepareCertificateData(welderData) {
+  try {
+    console.log('🎴 Preparing Certificate data');
+    
+    // Transform data (URL cleaning happens in transformCertificateData)
+    const transformed = transformCertificateData(welderData)
+    
+    if (!transformed) {
+      throw new Error('Failed to transform certificate data')
     }
+
+    // Validate
+    const validation = validatePDFData(transformed, 'certificate')
+    if (!validation.valid) {
+      console.warn('⚠️ Validation warnings:', validation.errors);
+    }
+
+    // Generate QR code URL for Certificate → Should open Form1
+    const qrURL = generateCertificateQRCode(transformed.certificateNo)
+    const qrCode = await this.generateQRCodeFromURL(qrURL)
+
+    console.log('✅ Certificate QR → Opens Form1 at:', qrURL)
+    console.log('✅ Certificate data prepared successfully:', {
+      welderName: transformed.welderName,
+      certificateNo: transformed.certificateNo,
+      hasQRCode: !!qrCode,
+      certifierSignatureUrl: transformed.certifierSignatureUrl,
+      hasCertifierSignature: !!transformed.certifierSignatureUrl,
+      qualCount: transformed.qualifications?.length
+    });
+
+    return {
+      ...transformed,
+      qrCode,
+      logoUrl: '/iss-logo.png',
+      watermarkUrl: '/iss_logo_fevicon.png'
+    }
+  } catch (error) {
+    console.error('❌ Certificate data preparation error:', error)
+    throw error
   }
+}
 
   /**
    * Download PDF blob

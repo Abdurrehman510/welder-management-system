@@ -402,7 +402,7 @@ export default function AddContinuityDialog({ open, onOpenChange, welderId, wpqR
                 <Input
                     id="verifierSignature"
                     type="file"
-                    accept="image/jpeg,image/png,image/webp"
+                    accept="image/jpeg,image/png"
                     onChange={handleVerifierSignatureChange}
                     disabled={saving}
                     className="cursor-pointer"
@@ -487,7 +487,7 @@ export default function AddContinuityDialog({ open, onOpenChange, welderId, wpqR
                 <Input
                     id="qcSignature"
                     type="file"
-                    accept="image/jpeg,image/png,image/webp"
+                    accept="image/jpeg,image/png"
                     onChange={handleQcSignatureChange}
                     disabled={saving}
                     className="cursor-pointer"

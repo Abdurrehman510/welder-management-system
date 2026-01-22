@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { ChevronDown, ChevronUp, CheckCircle2, AlertCircle, Plus } from 'lucide-react'
+import { ChevronDown, ChevronUp, CheckCircle2, AlertCircle, Plus, Upload, X, ImageIcon } from 'lucide-react'
 import ContinuityRow from './ContinuityRow'
 
 const FORM_NO_PREFIX = 'ISS-ML-WPQ-'
@@ -301,6 +301,59 @@ export default function Section6_Continuity({
               </div>
             </div>
 
+            {/* ✅ NEW: Certifier Signature Upload */}
+            <div className="mb-6">
+              <Label className="font-semibold mb-2 block">
+                Certifier Signature (Optional)
+              </Label>
+              <div className="text-xs text-gray-500 mb-2 flex items-center gap-1">
+                <ImageIcon className="h-3 w-3" />
+                Accepted formats: <span className="font-semibold">JPG, JPEG, PNG</span> • This signature will appear in the certificate
+              </div>
+              {data.certifierSignaturePreview || data.certifierSignatureUrl ? (
+                <div className="relative inline-block">
+                  <img
+                    src={data.certifierSignaturePreview || data.certifierSignatureUrl}
+                    alt="Certifier signature"
+                    className="h-24 w-auto rounded border border-gray-300 bg-white p-2"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => {
+                      handleChange('certifierSignature', null)
+                      handleChange('certifierSignaturePreview', null)
+                    }}
+                    className="absolute -right-2 -top-2"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="certifierSignature"
+                    type="file"
+                    accept="image/jpeg,image/png"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) {
+                        handleChange('certifierSignature', file)
+                        const reader = new FileReader()
+                        reader.onloadend = () => {
+                          handleChange('certifierSignaturePreview', reader.result)
+                        }
+                        reader.readAsDataURL(file)
+                      }
+                    }}
+                    className="cursor-pointer"
+                  />
+                  <Upload className="h-5 w-5 text-gray-400" />
+                </div>
+              )}
+            </div>
+
             {/* Reviewed By */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
@@ -323,6 +376,59 @@ export default function Section6_Continuity({
               </div>
             </div>
 
+            {/* ✅ NEW: Reviewer Signature Upload */}
+            <div className="mb-6">
+              <Label className="font-semibold mb-2 block">
+                Reviewer Signature (Optional)
+              </Label>
+              <div className="text-xs text-gray-500 mb-2 flex items-center gap-1">
+                <ImageIcon className="h-3 w-3" />
+                Accepted formats: <span className="font-semibold">JPG, JPEG, PNG</span>
+              </div>
+              {data.reviewerSignaturePreview || data.reviewerSignatureUrl ? (
+                <div className="relative inline-block">
+                  <img
+                    src={data.reviewerSignaturePreview || data.reviewerSignatureUrl}
+                    alt="Reviewer signature"
+                    className="h-24 w-auto rounded border border-gray-300 bg-white p-2"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => {
+                      handleChange('reviewerSignature', null)
+                      handleChange('reviewerSignaturePreview', null)
+                    }}
+                    className="absolute -right-2 -top-2"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="reviewerSignature"
+                    type="file"
+                    accept="image/jpeg,image/png"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) {
+                        handleChange('reviewerSignature', file)
+                        const reader = new FileReader()
+                        reader.onloadend = () => {
+                          handleChange('reviewerSignaturePreview', reader.result)
+                        }
+                        reader.readAsDataURL(file)
+                      }
+                    }}
+                    className="cursor-pointer"
+                  />
+                  <Upload className="h-5 w-5 text-gray-400" />
+                </div>
+              )}
+            </div>
+
             {/* Client/Contractor Representative */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
@@ -343,6 +449,59 @@ export default function Section6_Continuity({
                   placeholder="Print name"
                 />
               </div>
+            </div>
+
+            {/* ✅ NEW: Client Rep Signature Upload */}
+            <div className="mb-6">
+              <Label className="font-semibold mb-2 block">
+                Client Representative Signature (Optional)
+              </Label>
+              <div className="text-xs text-gray-500 mb-2 flex items-center gap-1">
+                <ImageIcon className="h-3 w-3" />
+                Accepted formats: <span className="font-semibold">JPG, JPEG, PNG</span>
+              </div>
+              {data.clientRepSignaturePreview || data.clientRepSignatureUrl ? (
+                <div className="relative inline-block">
+                  <img
+                    src={data.clientRepSignaturePreview || data.clientRepSignatureUrl}
+                    alt="Client rep signature"
+                    className="h-24 w-auto rounded border border-gray-300 bg-white p-2"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => {
+                      handleChange('clientRepSignature', null)
+                      handleChange('clientRepSignaturePreview', null)
+                    }}
+                    className="absolute -right-2 -top-2"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="clientRepSignature"
+                    type="file"
+                    accept="image/jpeg,image/png"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) {
+                        handleChange('clientRepSignature', file)
+                        const reader = new FileReader()
+                        reader.onloadend = () => {
+                          handleChange('clientRepSignaturePreview', reader.result)
+                        }
+                        reader.readAsDataURL(file)
+                      }
+                    }}
+                    className="cursor-pointer"
+                  />
+                  <Upload className="h-5 w-5 text-gray-400" />
+                </div>
+              )}
             </div>
 
             {/* Date of Issue */}

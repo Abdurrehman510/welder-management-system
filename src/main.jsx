@@ -6,11 +6,14 @@ import { AuthProvider } from './contexts/AuthContext'
 import { Toaster } from 'sonner'
 import './styles/globals.css'
 
+// ✅ FIX: Add Buffer polyfill for browser environment
+import { Buffer } from 'buffer'
+window.Buffer = Buffer
 
 /**
- * ✅ FIXED: Added Sonner Toaster for toast notifications
- * ✅ Position: top-right
- * ✅ Rich colors enabled for success/error/info states
+ * ✅ FIXED: Added Buffer polyfill for @react-pdf/renderer
+ * ✅ Added Sonner Toaster for toast notifications
+ * ✅ Position: top-right with rich colors
  */
 
 ReactDOM.createRoot(document.getElementById('root')).render(

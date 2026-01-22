@@ -9,6 +9,7 @@ import { StyleSheet } from '@react-pdf/renderer';
 
 export const styles = StyleSheet.create({
   // ==================== PAGE CONTAINER ====================
+  
   page: {
     width: 242.65,
     height: 153,
@@ -33,6 +34,7 @@ export const styles = StyleSheet.create({
     height: '100%',
     objectFit: 'contain',
     opacity: 0.03,
+    zIndex:-1,
   },
   
   // ==================== FRONT PAGE ====================
@@ -66,7 +68,7 @@ export const styles = StyleSheet.create({
   },
   
   cardNumber: {
-    fontSize: 6,
+    fontSize: 8,
     fontWeight: 'bold',
     color: '#000000',
     letterSpacing: 0.2,
@@ -79,11 +81,12 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   
-  headerLogo: {
-    width: 20,
-    height: 20,
+    headerLogo: {
+    width: 80,   // increased
+    height: 34,  // increased
     objectFit: 'contain',
-  },
+    },
+
   
   companyInfo: {
     display: 'flex',
@@ -142,7 +145,7 @@ export const styles = StyleSheet.create({
   },
   
   inspectorLabel: {
-    fontSize: 3.8,
+    fontSize: 4.4,
     fontWeight: 'bold',
     color: '#000000',
     textAlign: 'center',
@@ -151,7 +154,7 @@ export const styles = StyleSheet.create({
   },
   
   inspectorName: {
-    fontSize: 4,
+    fontSize: 5,
     color: '#000000',
     textAlign: 'center',
     fontWeight: 'bold',
@@ -160,7 +163,7 @@ export const styles = StyleSheet.create({
   },
   
   cswipCert: {
-    fontSize: 3.2,
+    fontSize: 3.8,
     color: '#000000',
     textAlign: 'center',
     fontFamily: 'Helvetica',
@@ -168,14 +171,19 @@ export const styles = StyleSheet.create({
   },
   
   signatureImage: {
-    width: '80%',
+    width: 70,  
     height: 12,
-    marginTop: 1.2,
+    marginBottom: 0.6,
     objectFit: 'contain',
-    borderTop: '0.5pt solid #000000',
-    paddingTop: 0.6,
-  },
-  
+    },
+
+  signatureLine: {
+  width: 70,
+  borderTop: '0.6pt solid #000000',
+  marginTop: 0.8,
+},
+
+
   // ==================== CENTER SECTION ====================
   centerSection: {
     width: '43%',
@@ -186,7 +194,7 @@ export const styles = StyleSheet.create({
   },
   
   certificationText: {
-    fontSize: 3.5,
+    fontSize: 4.25,
     textAlign: 'center',
     color: '#000000',
     lineHeight: 1.2,
@@ -207,7 +215,7 @@ export const styles = StyleSheet.create({
   },
   
   detailLabel: {
-    fontSize: 3.8,
+    fontSize: 4.5,
     fontWeight: 'bold',
     color: '#000000',
     width: '38%',
@@ -223,10 +231,10 @@ export const styles = StyleSheet.create({
   },
   
   detailValue: {
-    fontSize: 3.8,
+    fontSize: 4.4,
     color: '#000000',
     width: '57%',
-    lineHeight: 1.15,
+    lineHeight: 1.25,
     fontFamily: 'Helvetica',
   },
   
@@ -282,22 +290,22 @@ export const styles = StyleSheet.create({
   },
   
   clientRepLabel: {
-    fontSize: 3.2,
+    fontSize: 4.4,
     fontWeight: 'bold',
     color: '#000000',
     textAlign: 'center',
-    lineHeight: 1.1,
+    lineHeight: 1.4,
     fontFamily: 'Helvetica-Bold',
-    marginBottom: 0.3,
+    marginBottom: 0.8,
   },
   
   clientRepName: {
-    fontSize: 3.6,
+    fontSize: 4.8,
     color: '#000000',
     textAlign: 'center',
     fontWeight: 'bold',
     fontFamily: 'Helvetica-Bold',
-    lineHeight: 1.15,
+    lineHeight: 1.2,
   },
   
   // ==================== BACK PAGE ====================

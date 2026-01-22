@@ -46,7 +46,7 @@ export function useFileUpload() {
   if (!allowedExtensions.includes(fileExtension)) {
     return {
       valid: false,
-      error: `Invalid File Type: ${typeLabel} must be JPG, JPEG, PNG, or WEBP. Your file has extension: .${fileExtension}`
+      error: `Invalid File Type: ${typeLabel} must be JPG, JPEG, PNG. Your file has extension: .${fileExtension}`
     }
   }
 
@@ -54,7 +54,7 @@ export function useFileUpload() {
   if (file.type && !allowedMimeTypes.includes(file.type.toLowerCase())) {
     return {
       valid: false,
-      error: `Invalid File Type: ${typeLabel} must be JPG, JPEG, PNG, or WEBP. Detected type: ${file.type}`
+      error: `Invalid File Type: ${typeLabel} must be JPG, JPEG, PNG. Detected type: ${file.type}`
     }
   }
 
