@@ -1,0 +1,5813 @@
+🏗️ WELDER QUALIFICATION MANAGEMENT SYSTEM
+
+
+
+Complete Project Documentation & Metadata
+
+
+
+
+
+
+
+📋 TABLE OF CONTENTS
+
+
+
+
+
+
+
+Project Overview
+
+
+
+Scope & Features
+
+
+
+Technology Stack
+
+
+
+Complete File Structure
+
+
+
+Database Schema
+
+
+
+Page-by-Page Specifications
+
+
+
+User Flow Diagram
+
+
+
+API Endpoints & Services
+
+
+
+PDF Generation Specifications
+
+
+
+Development Phases
+
+
+
+Environment Setup
+
+
+
+Data Models & Types
+
+
+
+Business Logic & Rules
+
+
+
+Security & Authentication
+
+
+
+Testing Strategy
+
+
+
+Deployment Guide
+
+
+
+
+
+
+
+
+
+
+
+1. PROJECT OVERVIEW
+
+
+
+1.1 Purpose
+
+
+
+A web-based system to digitally manage welder qualifications, certifications, and continuity records in compliance with welding standards (ASME, AWS, API). The system replaces manual paperwork with a searchable, traceable digital solution.
+
+
+
+1.2 Target Users
+
+
+
+
+
+
+
+Industrial Support Services Company administrators
+
+
+
+QC managers and supervisors
+
+
+
+Client representatives
+
+
+
+Auditors
+
+
+
+
+
+
+
+1.3 Key Objectives
+
+
+
+
+
+
+
+Maintain single source of truth for 250-300+ welders
+
+
+
+Reduce manual paperwork and errors
+
+
+
+Enable fast audits & verifications
+
+
+
+Generate professional certificates and reports
+
+
+
+Track welder qualification continuity
+
+
+
+
+
+
+
+
+
+
+
+2. SCOPE & FEATURES
+
+
+
+2.1 IN SCOPE (Current Phase)
+
+
+
+✅ Authentication
+
+
+
+
+
+
+
+User login with email/password
+
+
+
+Session management
+
+
+
+Password change functionality
+
+
+
+Logout
+
+
+
+Protected routes
+
+
+
+
+
+
+
+✅ Home Page
+
+
+
+
+
+
+
+Navbar with navigation
+
+
+
+5 form buttons (Form1 to Form5)
+
+
+
+Footer with company info
+
+
+
+
+
+
+
+✅ Form1 (WPQ Certificate)
+
+
+
+
+
+
+
+Single-page form with 6 sections
+
+
+
+Photo upload for welder
+
+
+
+Dynamic continuity records table (add/remove rows)
+
+
+
+Signature uploads
+
+
+
+Form validation
+
+
+
+Save & submit functionality
+
+
+
+
+
+
+
+✅ Complete Report Page
+
+
+
+
+
+
+
+Navigation to detailed reports
+
+
+
+Quick access buttons
+
+
+
+
+
+
+
+✅ Detailed Reports Form1 Page
+
+
+
+
+
+
+
+Search by: Welder Name, Client/Contractor, Certificate No
+
+
+
+Results table with 6 columns:
+
+
+
+
+
+
+
+Action: Update button
+
+
+
+Welder Name: Name + small profile photo
+
+
+
+Client/Contractor Name
+
+
+
+Certificate No
+
+
+
+Certificate: Certificate button (generates PDF)
+
+
+
+Delete: Delete button with confirmation
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+✅ Update Form Page
+
+
+
+
+
+
+
+Pre-populate form with existing data
+
+
+
+Editable fields
+
+
+
+Update button
+
+
+
+Cancel button (redirect back)
+
+
+
+
+
+
+
+✅ Certificate Generation
+
+
+
+
+
+
+
+PDF output matching provided format
+
+
+
+QR code embedded
+
+
+
+Professional layout
+
+
+
+
+
+
+
+✅ Form1 Details Page
+
+
+
+
+
+
+
+Table with 5 columns:
+
+
+
+
+
+
+
+Action: View Form1 button + View Form2 button
+
+
+
+Name: Name + small profile photo
+
+
+
+Designation
+
+
+
+DOB: Date of Birth
+
+
+
+DOJ: Date of Joining (default "DOJ" if not found)
+
+
+
+
+
+
+
+
+
+
+
+View Form1: Generate PDF in provided format
+
+
+
+View Form2: Generate PDF in provided format (continuity record)
+
+
+
+
+
+
+
+✅ Search Page
+
+
+
+
+
+
+
+Search by: Company Name OR Certificate No
+
+
+
+Results table with 4 columns:
+
+
+
+
+
+
+
+Welder Name: Name + small profile photo
+
+
+
+Iqama/Passport No
+
+
+
+Certificate No
+
+
+
+Action: Add New Entry button (placeholder, no function)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2.2 OUT OF SCOPE (Future Phases)
+
+
+
+
+
+
+
+Form2 to Form5 functionality
+
+
+
+"Add New Entry" button implementation
+
+
+
+Email notifications
+
+
+
+Advanced analytics dashboard
+
+
+
+Role-based permissions (admin vs viewer)
+
+
+
+Expiration alerts
+
+
+
+Bulk import/export
+
+
+
+
+
+
+
+
+
+
+
+3. TECHNOLOGY STACK
+
+
+
+3.1 Frontend
+
+
+
+Framework: React 18.x (with Vite)
+
+
+
+Routing: React Router DOM v6
+
+
+
+UI Library: Tailwind CSS + shadcn/ui
+
+
+
+State Management: React Hooks (useState, useEffect)
+
+
+
+Form Handling: React Hook Form + Zod validation
+
+
+
+Icons: Lucide React
+
+
+
+Date Handling: date-fns
+
+
+
+3.2 Backend
+
+
+
+BaaS: Supabase
+
+
+
+Database: PostgreSQL (via Supabase)
+
+
+
+Authentication: Supabase Auth
+
+
+
+Storage: Supabase Storage
+
+
+
+3.3 PDF & Document Generation
+
+
+
+PDF Library: @react-pdf/renderer
+
+
+
+QR Code: qrcode.react
+
+
+
+Image Processing: Browser native APIs
+
+
+
+3.4 Deployment
+
+
+
+Frontend Hosting: Vercel
+
+
+
+Database & Backend: Supabase Cloud
+
+
+
+CDN: Vercel Edge Network
+
+
+
+
+
+
+
+4. COMPLETE FILE STRUCTURE
+
+
+
+welder-management/
+
+
+
+│
+
+
+
+├── public/
+
+
+
+│   ├── iss-logo.png                    # Company logo
+
+
+
+│   ├── favicon.ico
+
+
+
+│   └── assets/
+
+
+
+│       └── placeholder-avatar.png      # Default avatar
+
+
+
+│
+
+
+
+├── src/
+
+
+
+│   │
+
+
+
+│   ├── assets/
+
+
+
+│   │   ├── images/
+
+
+
+│   │   │   └── logo.png
+
+
+
+│   │   └── fonts/                      # Custom fonts if needed
+
+
+
+│   │
+
+
+
+│   ├── components/
+
+
+
+│   │   │
+
+
+
+│   │   ├── ui/                         # shadcn/ui components
+
+
+
+│   │   │   ├── button.jsx
+
+
+
+│   │   │   ├── input.jsx
+
+
+
+│   │   │   ├── label.jsx
+
+
+
+│   │   │   ├── card.jsx
+
+
+
+│   │   │   ├── table.jsx
+
+
+
+│   │   │   ├── dialog.jsx
+
+
+
+│   │   │   ├── alert-dialog.jsx
+
+
+
+│   │   │   ├── select.jsx
+
+
+
+│   │   │   ├── textarea.jsx
+
+
+
+│   │   │   ├── badge.jsx
+
+
+
+│   │   │   ├── alert.jsx
+
+
+
+│   │   │   ├── dropdown-menu.jsx
+
+
+
+│   │   │   ├── popover.jsx
+
+
+
+│   │   │   ├── calendar.jsx
+
+
+
+│   │   │   ├── toast.jsx
+
+
+
+│   │   │   ├── toaster.jsx
+
+
+
+│   │   │   └── form.jsx
+
+
+
+│   │   │
+
+
+
+│   │   ├── layout/
+
+
+
+│   │   │   ├── Navbar.jsx              # Main navigation bar
+
+
+
+│   │   │   ├── Footer.jsx              # Footer component
+
+
+
+│   │   │   ├── Layout.jsx              # Main layout wrapper
+
+
+
+│   │   │   └── PageHeader.jsx          # Reusable page header
+
+
+
+│   │   │
+
+
+
+│   │   ├── auth/
+
+
+
+│   │   │   ├── LoginForm.jsx           # Login form component
+
+
+
+│   │   │   ├── ChangePasswordDialog.jsx # Password change modal
+
+
+
+│   │   │   ├── ProtectedRoute.jsx      # Route guard
+
+
+
+│   │   │   └── AuthProvider.jsx        # Auth context provider
+
+
+
+│   │   │
+
+
+
+│   │   ├── home/
+
+
+
+│   │   │   ├── FormButton.jsx          # Large form button component
+
+
+
+│   │   │   └── HomeHero.jsx            # Hero section (if needed)
+
+
+
+│   │   │
+
+
+
+│   │   ├── forms/
+
+
+
+│   │   │   ├── Form1/
+
+
+
+│   │   │   │   ├── Form1Container.jsx  # Main Form1 component
+
+
+
+│   │   │   │   ├── Section1_BasicInfo.jsx
+
+
+
+│   │   │   │   ├── Section2_TestDescription.jsx
+
+
+
+│   │   │   │   ├── Section3_TestingVars1.jsx
+
+
+
+│   │   │   │   ├── Section4_TestingVars2.jsx
+
+
+
+│   │   │   │   ├── Section5_Results.jsx
+
+
+
+│   │   │   │   ├── Section6_Continuity.jsx
+
+
+
+│   │   │   │   ├── ContinuityRow.jsx   # Dynamic row component
+
+
+
+│   │   │   │   └── FormNavigation.jsx  # Form action buttons
+
+
+
+│   │   │   │
+
+
+
+│   │   │   ├── PhotoUpload.jsx         # Reusable photo upload
+
+
+
+│   │   │   ├── SignatureUpload.jsx     # Signature upload
+
+
+
+│   │   │   └── FormField.jsx           # Reusable form field wrapper
+
+
+
+│   │   │
+
+
+
+│   │   ├── reports/
+
+
+
+│   │   │   ├── ReportCard.jsx          # Report navigation card
+
+
+
+│   │   │   ├── SearchBar.jsx           # Search input component
+
+
+
+│   │   │   ├── DetailedReportTable.jsx # Form1 detailed report table
+
+
+
+│   │   │   ├── Form1DetailsTable.jsx   # Form1 details table
+
+
+
+│   │   │   ├── SearchResultsTable.jsx  # Search page results table
+
+
+
+│   │   │   ├── ActionButtons.jsx       # Update/Delete/View buttons
+
+
+
+│   │   │   └── ConfirmDeleteDialog.jsx # Delete confirmation modal
+
+
+
+│   │   │
+
+
+
+│   │   ├── pdf/
+
+
+
+│   │   │   ├── Form1PDF.jsx            # Form1 PDF template
+
+
+
+│   │   │   ├── Form2PDF.jsx            # Form2 PDF template (continuity)
+
+
+
+│   │   │   ├── CertificatePDF.jsx      # Certificate PDF template
+
+
+
+│   │   │   ├── PDFViewer.jsx           # PDF preview component
+
+
+
+│   │   │   ├── PDFDownloadButton.jsx   # Download PDF button
+
+
+
+│   │   │   └── QRCodeComponent.jsx     # QR code generator
+
+
+
+│   │   │
+
+
+
+│   │   └── common/
+
+
+
+│   │       ├── LoadingSpinner.jsx      # Loading indicator
+
+
+
+│   │       ├── ErrorMessage.jsx        # Error display
+
+
+
+│   │       ├── EmptyState.jsx          # Empty state component
+
+
+
+│   │       ├── Avatar.jsx              # User avatar component
+
+
+
+│   │       └── DataTable.jsx           # Reusable data table
+
+
+
+│   │
+
+
+
+│   ├── pages/
+
+
+
+│   │   ├── Login.jsx                   # Login page
+
+
+
+│   │   ├── Home.jsx                    # Home page with form buttons
+
+
+
+│   │   ├── Form1Page.jsx               # Form1 entry page
+
+
+
+│   │   ├── UpdateForm1Page.jsx         # Update existing Form1
+
+
+
+│   │   ├── CompleteReport.jsx          # Complete report landing
+
+
+
+│   │   ├── DetailedReportsForm1.jsx    # Detailed reports with search
+
+
+
+│   │   ├── Form1Details.jsx            # Form1 details listing
+
+
+
+│   │   ├── SearchPage.jsx              # Main search page
+
+
+
+│   │   └── NotFound.jsx                # 404 page
+
+
+
+│   │
+
+
+
+│   ├── lib/
+
+
+
+│   │   ├── supabase.js                 # Supabase client initialization
+
+
+
+│   │   └── utils.js                    # Utility functions (cn, etc.)
+
+
+
+│   │
+
+
+
+│   ├── hooks/
+
+
+
+│   │   ├── useAuth.js                  # Authentication hook
+
+
+
+│   │   ├── useWelders.js               # Welders CRUD hook
+
+
+
+│   │   ├── useWPQRecords.js            # WPQ records hook
+
+
+
+│   │   ├── useContinuityRecords.js     # Continuity records hook
+
+
+
+│   │   ├── useFileUpload.js            # File upload hook
+
+
+
+│   │   ├── useSearch.js                # Search functionality hook
+
+
+
+│   │   └── useToast.js                 # Toast notifications hook
+
+
+
+│   │
+
+
+
+│   ├── services/
+
+
+
+│   │   ├── authService.js              # Auth API calls
+
+
+
+│   │   ├── welderService.js            # Welder CRUD operations
+
+
+
+│   │   ├── wpqService.js               # WPQ record operations
+
+
+
+│   │   ├── continuityService.js        # Continuity record operations
+
+
+
+│   │   ├── storageService.js           # Supabase storage operations
+
+
+
+│   │   ├── pdfService.js               # PDF generation service
+
+
+
+│   │   └── qrCodeService.js            # QR code generation
+
+
+
+│   │
+
+
+
+│   ├── utils/
+
+
+
+│   │   ├── validators.js               # Form validation schemas (Zod)
+
+
+
+│   │   ├── formatters.js               # Data formatters
+
+
+
+│   │   ├── constants.js                # App constants
+
+
+
+│   │   ├── helpers.js                  # Helper functions
+
+
+
+│   │   └── dateUtils.js                # Date manipulation utilities
+
+
+
+│   │
+
+
+
+│   ├── contexts/
+
+
+
+│   │   └── AuthContext.jsx             # Global auth context
+
+
+
+│   │
+
+
+
+│   ├── types/
+
+
+
+│   │   ├── welder.types.js             # Welder data types
+
+
+
+│   │   ├── wpq.types.js                # WPQ record types
+
+
+
+│   │   └── common.types.js             # Common types
+
+
+
+│   │
+
+
+
+│   ├── styles/
+
+
+
+│   │   └── globals.css                 # Global styles + Tailwind
+
+
+
+│   │
+
+
+
+│   ├── App.jsx                         # Root component with routes
+
+
+
+│   ├── main.jsx                        # Entry point
+
+
+
+│   └── router.jsx                      # Route configuration
+
+
+
+│
+
+
+
+├── .env.local                          # Environment variables
+
+
+
+├── .env.example                        # Example env file
+
+
+
+├── .gitignore                          # Git ignore rules
+
+
+
+├── package.json                        # Dependencies
+
+
+
+├── package-lock.json                   # Lock file
+
+
+
+├── vite.config.js                      # Vite configuration
+
+
+
+├── tailwind.config.js                  # Tailwind configuration
+
+
+
+├── postcss.config.js                   # PostCSS configuration
+
+
+
+├── components.json                     # shadcn/ui configuration
+
+
+
+├── jsconfig.json                       # JavaScript configuration
+
+
+
+├── vercel.json                         # Vercel deployment config
+
+
+
+├── README.md                           # Project documentation
+
+
+
+└── SETUP.md                            # Setup instructions
+
+
+
+Total Files Count: ~90 files
+
+
+
+
+
+
+
+5. DATABASE SCHEMA
+
+
+
+5.1 Tables Overview
+
+
+
+1. welders              (Main welder information)
+
+
+
+2. wpq_records          (Form1 - WPQ Certificate data)
+
+
+
+3. continuity_records   (Continuity history)
+
+
+
+4. documents            (PDF storage references)
+
+
+
+5. audit_logs           (Change tracking)
+
+
+
+5.2 Detailed Schema
+
+
+
+Table: welders
+
+
+
+sqlid                  UUID PRIMARY KEY
+
+
+
+certificate_no      VARCHAR(50) UNIQUE NOT NULL
+
+
+
+symbol_stamp_no     VARCHAR(50)
+
+
+
+welder_name         VARCHAR(100) NOT NULL
+
+
+
+welder_name_short   VARCHAR(50)
+
+
+
+iqama_passport_no   VARCHAR(20) NOT NULL
+
+
+
+photo_url           TEXT
+
+
+
+designation         VARCHAR(100)        -- NEW FIELD
+
+
+
+date_of_birth       DATE               -- NEW FIELD
+
+
+
+date_of_joining     DATE               -- NEW FIELD
+
+
+
+client_contractor   VARCHAR(100)
+
+
+
+client_name_short   VARCHAR(50)
+
+
+
+status              VARCHAR(20) DEFAULT 'active'
+
+
+
+is_deleted          BOOLEAN DEFAULT FALSE
+
+
+
+created_by          UUID REFERENCES auth.users(id)
+
+
+
+created_at          TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+
+
+
+updated_at          TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+
+
+
+Table: wpq_records
+
+
+
+sqlid                              UUID PRIMARY KEY
+
+
+
+welder_id                       UUID REFERENCES welders(id) ON DELETE CASCADE
+
+
+
+date_welded                     DATE NOT NULL
+
+
+
+
+
+
+
+-- Test Description (Section 2)
+
+
+
+wps_identification              VARCHAR(100)
+
+
+
+wps_identification_type         VARCHAR(50)
+
+
+
+base_metal_specification        VARCHAR(100)
+
+
+
+thickness_mm                    DECIMAL(10, 2)
+
+
+
+
+
+
+
+-- Testing Variables Part 1 (Section 3)
+
+
+
+welding_processes_actual        VARCHAR(100)
+
+
+
+welding_processes_range         VARCHAR(100)
+
+
+
+welding_type_actual             VARCHAR(100)
+
+
+
+welding_type_range              VARCHAR(100)
+
+
+
+plate_pipe_type                 VARCHAR(20)
+
+
+
+backing_type_actual             VARCHAR(100)
+
+
+
+backing_type_range              VARCHAR(100)
+
+
+
+plate_pipe_actual               VARCHAR(100)
+
+
+
+plate_pipe_range                VARCHAR(100)
+
+
+
+base_metal_pno_actual           VARCHAR(100)
+
+
+
+base_metal_pno_range            VARCHAR(100)
+
+
+
+filler_metal_addition_actual    VARCHAR(100)
+
+
+
+filler_metal_addition_range     VARCHAR(100)
+
+
+
+filler_specification_actual     VARCHAR(100)
+
+
+
+filler_specification_range      VARCHAR(100)
+
+
+
+electrode_classification_actual VARCHAR(100)
+
+
+
+electrode_classification_range  VARCHAR(100)
+
+
+
+filler_metal_fno_actual         VARCHAR(150)
+
+
+
+filler_metal_fno_range          VARCHAR(150)
+
+
+
+
+
+
+
+-- Testing Variables Part 2 (Section 4)
+
+
+
+consumable_insert_actual        VARCHAR(100)
+
+
+
+consumable_insert_range         VARCHAR(100)
+
+
+
+filler_product_form_actual      VARCHAR(100)
+
+
+
+filler_product_form_range       VARCHAR(100)
+
+
+
+process1                        VARCHAR(50)
+
+
+
+process1_3layers_minimum        BOOLEAN
+
+
+
+process2                        VARCHAR(50)
+
+
+
+process2_3layers_minimum        BOOLEAN
+
+
+
+deposited_thickness_actual      VARCHAR(100)
+
+
+
+deposited_thickness_range       VARCHAR(100)
+
+
+
+process1_actual                 VARCHAR(100)
+
+
+
+process1_range                  VARCHAR(100)
+
+
+
+process2_actual                 VARCHAR(100)
+
+
+
+process2_range                  VARCHAR(100)
+
+
+
+position_actual                 VARCHAR(150)
+
+
+
+position_range                  VARCHAR(150)
+
+
+
+vertical_progression_actual     VARCHAR(100)
+
+
+
+vertical_progression_range      VARCHAR(100)
+
+
+
+fuel_gas_type_actual            VARCHAR(100)
+
+
+
+fuel_gas_type_range             VARCHAR(100)
+
+
+
+inert_gas_backing_actual        VARCHAR(100)
+
+
+
+inert_gas_backing_range         VARCHAR(100)
+
+
+
+transfer_mode_actual            VARCHAR(100)
+
+
+
+transfer_mode_range             VARCHAR(100)
+
+
+
+gtaw_polarity_actual            VARCHAR(100)
+
+
+
+gtaw_polarity_range             VARCHAR(100)
+
+
+
+
+
+
+
+-- Results Section (Section 5)
+
+
+
+visual_exam_complete            VARCHAR(50)
+
+
+
+test_types                      JSONB
+
+
+
+test_results                    JSONB
+
+
+
+alt_volumetric_exam_result      VARCHAR(100)
+
+
+
+alt_volumetric_exam_result_type VARCHAR(10)
+
+
+
+fillet_weld_fracture_test       VARCHAR(50)
+
+
+
+defect_length_percent           VARCHAR(50)
+
+
+
+fillet_welds                    VARCHAR(20)
+
+
+
+macro_examination               VARCHAR(50)
+
+
+
+fillet_size                     VARCHAR(50)
+
+
+
+concavity_convexity_in          VARCHAR(50)
+
+
+
+other_tests                     TEXT
+
+
+
+film_evaluated_by               VARCHAR(100)
+
+
+
+evaluator_company_name          VARCHAR(100)
+
+
+
+mechanical_tests_conduct        VARCHAR(100)
+
+
+
+test_cert_no                    VARCHAR(100)
+
+
+
+welding_supervised_by           VARCHAR(100)
+
+
+
+
+
+
+
+-- Certification Block (Section 6)
+
+
+
+code_year                       VARCHAR(10) DEFAULT '2025'
+
+
+
+certified_date                  DATE
+
+
+
+certified_print_name            VARCHAR(100)
+
+
+
+certified_by_cert_no            VARCHAR(100)
+
+
+
+reviewed_date                   DATE
+
+
+
+reviewed_by_name                VARCHAR(100)
+
+
+
+client_rep_date                 DATE
+
+
+
+client_rep_name                 VARCHAR(100)
+
+
+
+form_no                         VARCHAR(50)
+
+
+
+date_of_issue                   DATE
+
+
+
+
+
+
+
+-- Metadata
+
+
+
+created_at                      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+
+
+
+updated_at                      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+
+
+
+Table: continuity_records
+
+
+
+sqlid                      UUID PRIMARY KEY
+
+
+
+welder_id               UUID REFERENCES welders(id) ON DELETE CASCADE
+
+
+
+wpq_record_id           UUID REFERENCES wpq_records(id) ON DELETE CASCADE
+
+
+
+continuity_date         DATE NOT NULL
+
+
+
+verifier_name           VARCHAR(100)
+
+
+
+verifier_signature_url  TEXT
+
+
+
+company                 VARCHAR(100)
+
+
+
+reference               VARCHAR(150)
+
+
+
+qc_name                 VARCHAR(100)
+
+
+
+qc_signature_url        TEXT
+
+
+
+created_at              TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+
+
+
+updated_at              TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+
+
+
+Table: documents
+
+
+
+sqlid              UUID PRIMARY KEY
+
+
+
+welder_id       UUID REFERENCES welders(id) ON DELETE CASCADE
+
+
+
+wpq_record_id   UUID REFERENCES wpq_records(id) ON DELETE CASCADE
+
+
+
+document_type   VARCHAR(50) NOT NULL
+
+
+
+file_url        TEXT NOT NULL
+
+
+
+qr_code_url     TEXT
+
+
+
+generated_at    TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+
+
+
+created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+
+
+
+Table: audit_logs
+
+
+
+sqlid          UUID PRIMARY KEY
+
+
+
+table_name  VARCHAR(50) NOT NULL
+
+
+
+record_id   UUID NOT NULL
+
+
+
+action      VARCHAR(20) NOT NULL
+
+
+
+old_data    JSONB
+
+
+
+new_data    JSONB
+
+
+
+user_id     UUID REFERENCES auth.users(id)
+
+
+
+created_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+
+
+
+5.3 Supabase Storage Buckets
+
+
+
+1. welder-photos     (Profile pictures)
+
+
+
+2. signatures        (Digital signatures)
+
+
+
+3. documents         (Generated PDFs)
+
+
+
+4. qr-codes          (QR code images)
+
+
+
+
+
+
+
+6. PAGE-BY-PAGE SPECIFICATIONS
+
+
+
+6.1 Login Page (/login)
+
+
+
+URL: /login
+
+
+
+Purpose: User authentication
+
+
+
+Components:
+
+
+
+
+
+
+
+Login form with email and password
+
+
+
+Submit button
+
+
+
+Error message display
+
+
+
+Company logo and branding
+
+
+
+
+
+
+
+Functionality:
+
+
+
+
+
+
+
+Validate email format
+
+
+
+Authenticate with Supabase Auth
+
+
+
+Redirect to home page on success
+
+
+
+Show error message on failure
+
+
+
+Remember session (persistent login)
+
+
+
+
+
+
+
+Form Fields:
+
+
+
+Email:          input[type="email"], required
+
+
+
+Password:       input[type="password"], required, min 6 chars
+
+
+
+Submit Button:  "Login"
+
+
+
+
+
+
+
+6.2 Home Page (/)
+
+
+
+URL: /
+
+
+
+Purpose: Main landing page after login
+
+
+
+Layout Structure:
+
+
+
+┌─────────────────────────────────────────────┐
+
+
+
+│              NAVBAR                         │
+
+
+
+│  Logo | Home | Complete Report | Search |  │
+
+
+
+│       | Change Password | Logout            │
+
+
+
+├─────────────────────────────────────────────┤
+
+
+
+│                                             │
+
+
+
+│         PAGE CONTENT AREA                   │
+
+
+
+│                                             │
+
+
+
+│    ┌───────┐  ┌───────┐  ┌───────┐        │
+
+
+
+│    │ Form1 │  │ Form2 │  │ Form3 │        │
+
+
+
+│    │Button │  │Button │  │Button │        │
+
+
+
+│    └───────┘  └───────┘  └───────┘        │
+
+
+
+│                                             │
+
+
+
+│    ┌───────┐  ┌───────┐                    │
+
+
+
+│    │ Form4 │  │ Form5 │                    │
+
+
+
+│    │Button │  │Button │                    │
+
+
+
+│    └───────┘  └───────┘                    │
+
+
+
+│                                             │
+
+
+
+├─────────────────────────────────────────────┤
+
+
+
+│              FOOTER                         │
+
+
+
+│  © 2025 Industrial Support Services        │
+
+
+
+└─────────────────────────────────────────────┘
+
+
+
+Components:
+
+
+
+
+
+
+
+Navbar:
+
+
+
+
+
+
+
+Company Logo (left)
+
+
+
+Navigation tabs: Home, Complete Report, Search
+
+
+
+Change Password button (opens modal)
+
+
+
+Logout button (right)
+
+
+
+
+
+
+
+
+
+
+
+Main Content:
+
+
+
+
+
+
+
+5 large buttons in grid layout (3 + 2)
+
+
+
+Each button labeled "Form1" to "Form5"
+
+
+
+Only Form1 is clickable (navigates to form)
+
+
+
+Form2-5 are disabled/grayed out for now
+
+
+
+
+
+
+
+
+
+
+
+Footer:
+
+
+
+
+
+
+
+Company info
+
+
+
+Copyright text
+
+
+
+Contact details
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Button Specifications:
+
+
+
+Size:       200px x 150px
+
+
+
+Style:      Card-like with shadow
+
+
+
+Color:      Primary blue for Form1, gray for others
+
+
+
+Hover:      Slight elevation (Form1 only)
+
+
+
+Click:      Navigate to /form1 (Form1 only)
+
+
+
+
+
+
+
+6.3 Form1 Page (/form1)
+
+
+
+URL: /form1
+
+
+
+Purpose: Entry form for WPQ Certificate (all 6 sections)
+
+
+
+Layout: Single scrollable page with all sections
+
+
+
+Section Breakdown:
+
+
+
+Section 1: Header & Basic Information
+
+
+
+Fields:
+
+
+
+- Company Logo (static image)
+
+
+
+- Welder Photo (file upload, image preview)
+
+
+
+- Client/Contractor (text input)
+
+
+
+- Client Name Short (text input)
+
+
+
+- Certificate No (text input, required, unique)
+
+
+
+- Symbol/Stamp No (text input)
+
+
+
+- Welder Name (text input, required)
+
+
+
+- Welder Name Short (text input)
+
+
+
+- Iqama/Passport No (text input, required, 10 chars)
+
+
+
+- Date Welded (date picker, required)
+
+
+
+- Designation (text input)              [NEW]
+
+
+
+- Date of Birth (date picker)           [NEW]
+
+
+
+- Date of Joining (date picker)         [NEW]
+
+
+
+Section 2: Test Description
+
+
+
+Fields:
+
+
+
+- WPS Identification (text input)
+
+
+
+- WPS Identification Type (radio: Test coupon / Production weld)
+
+
+
+- Base Metal Specification (text input)
+
+
+
+- Thickness (number input, decimal) mm
+
+
+
+Section 3: Testing Variables Part 1
+
+
+
+3-column table: Variables | Actual | Range
+
+
+
+
+
+
+
+Rows:
+
+
+
+1.  Welding Processes
+
+
+
+2.  Welding Type
+
+
+
+3.  Backing (with Plate/Pipe radio buttons)
+
+
+
+4.  Plate/Pipe
+
+
+
+5.  Base Metal P-No
+
+
+
+6.  Filler Metal Deletion/Addition
+
+
+
+7.  Filler Specification
+
+
+
+8.  Electrode Classification
+
+
+
+9.  Filler Metal F-No (GTAW/SMAW)
+
+
+
+
+
+
+
+Each row: 2 input fields (Actual, Range)
+
+
+
+Section 4: Testing Variables Part 2
+
+
+
+3-column table: Variables | Actual | Range
+
+
+
+
+
+
+
+Rows:
+
+
+
+10. Consumable Insert
+
+
+
+11. Filler Metal Product Form
+
+
+
+12. Deposited Thickness
+
+
+
+    - Process 1 (text + checkbox "3 layers minimum")
+
+
+
+    - Process 2 (text + checkbox "3 layers minimum")
+
+
+
+13. Process 1 thickness
+
+
+
+14. Process 2 thickness
+
+
+
+15. Position
+
+
+
+16. Vertical Progression
+
+
+
+17. Fuel Gas Type
+
+
+
+18. Inert Gas Backing
+
+
+
+19. Transfer Mode
+
+
+
+20. GTAW Current/Polarity
+
+
+
+
+
+
+
+Each row: 2 input fields (Actual, Range)
+
+
+
+Section 5: Results
+
+
+
+Fields:
+
+
+
+- Visual Examination (dropdown: Accepted / Rejected)
+
+
+
+- Test Types (7 checkboxes):
+
+
+
+  □ Transverse Bend
+
+
+
+  □ Longitudinal Bend
+
+
+
+  □ Side Bend
+
+
+
+  □ Pipe Bend Specimen
+
+
+
+  □ Plate Bend Specimen
+
+
+
+  □ Pipe Macro Fusion Test
+
+
+
+  □ Plate Macro Fusion Test
+
+
+
+
+
+
+
+- Test Results Table (6 rows):
+
+
+
+  Type | Result (editable fields)
+
+
+
+
+
+
+
+- Alternative Volumetric Examination:
+
+
+
+  - Result (text input)
+
+
+
+  - Type (radio: RT / UT)
+
+
+
+
+
+
+
+- Fillet Weld Tests:
+
+
+
+  - Fracture Test (text input)
+
+
+
+  - Defect Length % (text input)
+
+
+
+  - Fillet Welds (dropdown: Plate / Pipe / None)
+
+
+
+
+
+
+
+- Macro Examination (text input)
+
+
+
+- Fillet Size (text input)
+
+
+
+- Concavity/Convexity (text input)
+
+
+
+- Other Tests (textarea)
+
+
+
+
+
+
+
+- Evaluation Personnel:
+
+
+
+  - Film Evaluated By (text input)
+
+
+
+  - Company Name (text input)
+
+
+
+  - Mechanical Tests Conducted By (text input)
+
+
+
+  - Test Certificate No (text input)
+
+
+
+  - Welding Supervised By (text input)
+
+
+
+Section 6: Continuity, Certification & Actions
+
+
+
+1. Continuity Records Table:
+
+
+
+   Columns: Date | Verifier Name | Signature | Company | Reference | QC Name | QC Signature
+
+
+
+   - Dynamic table with "Add Row" button
+
+
+
+   - Each row can be deleted
+
+
+
+   - Signature upload fields
+
+
+
+
+
+
+
+2. Certification Block:
+
+
+
+   - Code Year (text input, default: 2025)
+
+
+
+   - Certified Date (date picker)
+
+
+
+   - Certified By Name (text input)
+
+
+
+   - Certification No (text input) - CSWIP/AWS
+
+
+
+   - Reviewed Date (date picker)
+
+
+
+   - Reviewed By Name (text input)
+
+
+
+   - Client Rep Date (date picker)
+
+
+
+   - Client Rep Name (text input)
+
+
+
+   - Form No (text input) - ISS-ML-WPQ-###
+
+
+
+   - Date of Issue (date picker)
+
+
+
+
+
+
+
+3. Action Buttons:
+
+
+
+   - "Save & New Entry" (submit form + reset)
+
+
+
+   - "Save & Logout" (submit form + logout)
+
+
+
+   - "Cancel" (discard changes)
+
+
+
+Form Behavior:
+
+
+
+
+
+
+
+Real-time validation
+
+
+
+Show errors inline
+
+
+
+Disable submit if validation fails
+
+
+
+Show loading spinner during submission
+
+
+
+Success toast on save
+
+
+
+Error toast on failure
+
+
+
+
+
+
+
+
+
+
+
+6.4 Complete Report Page (/complete-report)
+
+
+
+URL: /complete-report
+
+
+
+Purpose: Navigation hub for reports
+
+
+
+Layout:
+
+
+
+┌─────────────────────────────────────────────┐
+
+
+
+│              NAVBAR                         │
+
+
+
+├─────────────────────────────────────────────┤
+
+
+
+│                                             │
+
+
+
+│        Complete Reports Section             │
+
+
+
+│                                             │
+
+
+
+│    ┌─────────────────────────────────┐     │
+
+
+
+│    │  Detailed Reports Form1         │     │
+
+
+
+│    │  (Button - Card Style)          │     │
+
+
+
+│    └─────────────────────────────────┘     │
+
+
+
+│                                             │
+
+
+
+│    ┌─────────────────────────────────┐     │
+
+
+
+│    │  Form1 Details                  │     │
+
+
+
+│    │  (Button - Card Style)          │     │
+
+
+
+│    └─────────────────────────────────┘     │
+
+
+
+│                                             │
+
+
+
+├─────────────────────────────────────────────┤
+
+
+
+│              FOOTER                         │
+
+
+
+└─────────────────────────────────────────────┘
+
+
+
+Components:
+
+
+
+
+
+
+
+Two large clickable cards
+
+
+
+Card 1: "Detailed Reports Form1" → /detailed-reports-form1
+
+
+
+Card 2: "Form1 Details" → /form1-details
+
+
+
+
+
+
+
+
+
+
+
+6.5 Detailed Reports Form1 Page (/detailed-reports-form1)
+
+
+
+URL: /detailed-reports-form1
+
+
+
+Purpose: Search and manage Form1 records
+
+
+
+Layout:
+
+
+
+┌─────────────────────────────────────────────┐
+
+
+
+│              NAVBAR                         │
+
+
+
+├─────────────────────────────────────────────┤
+
+
+
+│  Search Bar:                                │
+
+
+
+│  [Search by Name/Client/Cert No]  [Search] │
+
+
+
+├─────────────────────────────────────────────┤
+
+
+
+│                                             │
+
+
+
+│  Results Table (6 columns):                 │
+
+
+
+│  ┌────────────────────────────────────────┐│
+
+
+
+│  │Action│Name│Client│Cert│Certificate│Del││
+
+
+
+│  ├────────────────────────────────────────┤│
+
+
+
+│  │[Upd] │👤 A │MZN  │256 │[Cert Btn] │[X]││
+
+
+
+│  │      │Tulas│     │1-  │           │   ││
+
+
+
+│  │      │     │     │075 │           │   ││
+
+
+
+│  └────────────────────────────────────────┘│
+
+
+
+│                                             │
+
+
+
+├─────────────────────────────────────────────┤
+
+
+
+│              FOOTER                         │
+
+
+
+└─────────────────────────────────────────────┘
+
+
+
+Features:
+
+
+
+
+
+
+
+Search Bar:
+
+
+
+
+
+
+
+Single input field
+
+
+
+Search by: Welder Name OR Client/Contractor OR Certificate No
+
+
+
+Real-time search on button click
+
+
+
+Clear button to reset
+
+
+
+
+
+
+
+
+
+
+
+Results Table (6 Columns):
+
+
+
+Column 1 - Action:
+
+
+
+
+
+
+
+Update button for each row
+
+
+
+Click → Navigate to /update-form1/:id
+
+
+
+
+
+
+
+Column 2 - Welder Name:
+
+
+
+
+
+
+
+Small circular avatar (40px x 40px)
+
+
+
+Name text next to photo
+
+
+
+If no photo: show placeholder avatar
+
+
+
+
+
+
+
+Column 3 - Client/Contractor Name:
+
+
+
+
+
+
+
+Plain text
+
+
+
+
+
+
+
+Column 4 - Certificate No:
+
+
+
+
+
+
+
+Plain text
+
+
+
+
+
+
+
+Column 5 - Certificate:
+
+
+
+
+
+
+
+"Certificate" button for each row
+
+
+
+Click → Generate and download certificate PDF
+
+
+
+Loading spinner during generation
+
+
+
+
+
+
+
+Column 6 - Delete:
+
+
+
+
+
+
+
+Delete button (trash icon)
+
+
+
+Click → Show confirmation dialog
+
+
+
+On confirm → Soft delete (set is_deleted=true)
+
+
+
+Show success/error toast
+
+
+
+
+
+
+
+
+
+
+
+Empty State:
+
+
+
+
+
+
+
+Show "No records found" when search returns nothing
+
+
+
+Show illustration or icon
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6.6 Update Form1 Page (/update-form1/:id)
+
+
+
+URL: /update-form1/:id
+
+
+
+Purpose: Edit existing Form1 record
+
+
+
+Layout: Same as Form1 Page but with pre-filled data
+
+
+
+Behavior:
+
+
+
+
+
+
+
+Load welder record by ID
+
+
+
+Fetch associated WPQ record
+
+
+
+Fetch continuity records
+
+
+
+Pre-populate all form fields
+
+
+
+Make all fields editable
+
+
+
+Show "Update" button instead of "Save"
+
+
+
+Add "Cancel" button → Navigate back to detailed reports
+
+
+
+
+
+
+
+Buttons:
+
+
+
+
+
+
+
+Update Button: Save changes and show success message
+
+
+
+Cancel Button: Discard changes and go back
+
+
+
+
+
+
+
+Special Considerations:
+
+
+
+
+
+
+
+Validate uniqueness of certificate_no if changed
+
+
+
+Update updated_at timestamp
+
+
+
+Create audit log entry
+
+
+
+Show spinner during update
+
+
+
+
+
+
+
+
+
+
+
+6.7 Form1 Details Page (/form1-details)
+
+
+
+URL: /form1-details
+
+
+
+Purpose: List all welders with view options
+
+
+
+Layout:
+
+
+
+┌─────────────────────────────────────────────┐
+
+
+
+│              NAVBAR                         │
+
+
+
+├─────────────────────────────────────────────┤
+
+
+
+│                                             │
+
+
+
+│  Table (5 columns):                         │
+
+
+
+│  ┌────────────────────────────────────────┐│
+
+
+
+│  │Action  │Name│Designa│DOB      │DOJ    ││
+
+
+
+│  │        │    │tion   │         │       ││
+
+
+
+│  ├────────────────────────────────────────┤│
+
+
+
+│  │[Form1] │👤  │Senior │15-Jan-85│DOJ    ││
+
+
+
+│  │[Form2] │A T │Welder │         │       ││
+
+
+
+│  └────────────────────────────────────────┘│
+
+
+
+│                                             │
+
+
+
+├─────────────────────────────────────────────┤
+
+
+
+│              FOOTER                         │
+
+
+
+└─────────────────────────────────────────────┘
+
+
+
+Table Columns:
+
+
+
+Column 1 - Action:
+
+
+
+
+
+
+
+Two buttons per row:
+
+
+
+
+
+
+
+"View Form1" → Generate Form1 PDF
+
+
+
+"View Form2" → Generate Form2 PDF (continuity record)
+
+
+
+
+
+
+
+
+
+
+
+Stacked vertically or side by side
+
+
+
+
+
+
+
+Column 2 - Name:
+
+
+
+
+
+
+
+Small circular avatar (40px x 40px)
+
+
+
+Welder name next to photo
+
+
+
+
+
+
+
+Column 3 - Designation:
+
+
+
+
+
+
+
+Plain text
+
+
+
+Show actual designation value
+
+
+
+
+
+
+
+Column 4 - DOB (Date of Birth):
+
+
+
+
+
+
+
+Format: DD-MMM-YYYY
+
+
+
+Show actual DOB if available
+
+
+
+
+
+
+
+Column 5 - DOJ (Date of Joining):
+
+
+
+
+
+
+
+Format: DD-MMM-YYYY
+
+
+
+If not available: Show text "DOJ" as default
+
+
+
+
+
+
+
+PDF Generation:
+
+
+
+
+
+
+
+View Form1 Button:
+
+
+
+
+
+
+
+Generate PDF matching doc.pdf format
+
+
+
+Include all Form1 sections
+
+
+
+Embed QR code
+
+
+
+Auto-download or open in new tab
+
+
+
+
+
+
+
+
+
+
+
+View Form2 Button:
+
+
+
+
+
+
+
+Generate PDF matching Form2 image format
+
+
+
+Show continuity records table
+
+
+
+Auto-download or open in new tab
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6.8 Search Page (/search)
+
+
+
+URL: /search
+
+
+
+Purpose: Global search functionality
+
+
+
+Layout:
+
+
+
+┌─────────────────────────────────────────────┐
+
+
+
+│              NAVBAR                         │
+
+
+
+├─────────────────────────────────────────────┤
+
+
+
+│  Search Bar:                                │
+
+
+
+│  [Search by Company/Cert No]  [Search Btn] │
+
+
+
+├─────────────────────────────────────────────┤
+
+
+
+│                                             │
+
+
+
+│  Results Table (4 columns):                 │
+
+
+
+│  ┌────────────────────────────────────────┐│
+
+
+
+│  │Name      │Iqama/Pass│Cert No│Action   ││
+
+
+
+│  ├────────────────────────────────────────┤│
+
+
+
+│  │👤 A Tulas│246807794│25161- │[Add New]││
+
+
+
+│  │          │          │0756   │Entry    ││
+
+
+
+│  └────────────────────────────────────────┘│
+
+
+
+│                                             │
+
+
+
+├─────────────────────────────────────────────┤
+
+
+
+│              FOOTER                         │
+
+
+
+└─────────────────────────────────────────────┘
+
+
+
+Features:
+
+
+
+
+
+
+
+Search Bar:
+
+
+
+
+
+
+
+Single input field
+
+
+
+Search criteria: Company Name OR Certificate No
+
+
+
+Search button trigger
+
+
+
+Real-time results display
+
+
+
+
+
+
+
+
+
+
+
+Results Table (4 Columns):
+
+
+
+Column 1 - Welder Name:
+
+
+
+
+
+
+
+Small circular avatar (40px x 40px)
+
+
+
+Name text next to photo
+
+
+
+
+
+
+
+Column 2 - Iqama/Passport No:
+
+
+
+
+
+
+
+Plain text
+
+
+
+10-digit number
+
+
+
+
+
+
+
+Column 3 - Certificate No:
+
+
+
+
+
+
+
+Plain text
+
+
+
+
+
+
+
+Column 4 - Action:
+
+
+
+
+
+
+
+"Add New Entry" button
+
+
+
+Currently placeholder (no functionality)
+
+
+
+Disabled or shows tooltip "Coming Soon"
+
+
+
+
+
+
+
+
+
+
+
+Empty State:
+
+
+
+
+
+
+
+Show message when no results found
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+7. USER FLOW DIAGRAM
+
+
+
+┌─────────────┐
+
+
+
+│   LOGIN     │
+
+
+
+└──────┬──────┘
+
+
+
+       │
+
+
+
+       ▼
+
+
+
+┌─────────────────────────────────────┐
+
+
+
+│          HOME PAGE                  │
+
+
+
+│  [Form1] [Form2] [Form3]           │
+
+
+
+│  [Form4] [Form5]                    │
+
+
+
+└─┬─────┬─────────┬───────────────────┘
+
+
+
+  │     │         │
+
+
+
+  │     │         │
+
+
+
+  │     │         └──────────────────────┐
+
+
+
+  │     │                                 │
+
+
+
+  │     └────────────┐                   │
+
+
+
+  │                   │                   │
+
+
+
+  ▼                   ▼                   ▼
+
+
+
+┌──────────┐   ┌──────────────┐   ┌──────────┐
+
+
+
+│ FORM1    │   │COMPLETE      │   │ SEARCH   │
+
+
+
+│ (Entry)  │   │REPORT        │   │ PAGE     │
+
+
+
+└────┬─────┘   └───┬──────────┘   └──────────┘
+
+
+
+     │             │
+
+
+
+     │             ├────────────┐
+
+
+
+     │             │            │
+
+
+
+     ▼             ▼            ▼
+
+
+
+┌──────────┐ ┌─────────┐ ┌────────────┐
+
+
+
+│  Save    │ │DETAILED │ │FORM1       │
+
+
+
+│ Success  │ │REPORTS  │ │DETAILS     │
+
+
+
+└──────────┘ │FORM1    │ └─────┬──────┘
+
+
+
+             └────┬────┘       │
+
+
+
+                  │            │
+
+
+
+                  ▼            ▼
+
+
+
+            ┌──────────┐ ┌──────────┐
+
+
+
+            │ UPDATE   │ │View Form1│
+
+
+
+            │ FORM1    │ │View Form2│
+
+
+
+            └──────────┘ └──────────┘
+
+
+
+
+
+
+
+8. API ENDPOINTS & SERVICES
+
+
+
+8.1 Authentication Service
+
+
+
+javascript// authService.js
+
+
+
+
+
+
+
+login(email, password)
+
+
+
+logout()
+
+
+
+changePassword(newPassword)
+
+
+
+getCurrentUser()
+
+
+
+getSession()
+
+
+
+8.2 Welder Service
+
+
+
+javascript// welderService.js
+
+
+
+
+
+
+
+getAllWelders()
+
+
+
+getWelderById(id)
+
+
+
+createWelder(welderData)
+
+
+
+updateWelder(id, welderData)
+
+
+
+deleteWelder(id)              // Soft delete
+
+
+
+searchWelders(searchTerm)
+
+
+
+searchByCompanyOrCert(term)
+
+
+
+uploadWelderPhoto(file)
+
+
+
+8.3 WPQ Record Service
+
+
+
+javascript// wpqService.js
+
+
+
+
+
+
+
+getAllWPQRecords()
+
+
+
+getWPQRecordById(id)
+
+
+
+getWPQRecordByWelderId(welderId)
+
+
+
+createWPQRecord(wpqData)
+
+
+
+updateWPQRecord(id, wpqData)
+
+
+
+deleteWPQRecord(id)
+
+
+
+8.4 Continuity Record Service
+
+
+
+javascript// continuityService.js
+
+
+
+
+
+
+
+getContinuityRecordsByWelderId(welderId)
+
+
+
+createContinuityRecord(continuityData)
+
+
+
+updateContinuityRecord(id, continuityData)
+
+
+
+deleteContinuityRecord(id)
+
+
+
+uploadSignature(file)
+
+
+
+8.5 Storage Service
+
+
+
+javascript// storageService.js
+
+
+
+
+
+
+
+uploadFile(bucket, file, path)
+
+
+
+downloadFile(bucket, path)
+
+
+
+deleteFile(bucket, path)
+
+
+
+getPublicUrl(bucket, path)
+
+
+
+8.6 PDF Service
+
+
+
+javascript// pdfService.js
+
+
+
+
+
+
+
+generateForm1PDF(wpqData)
+
+
+
+generateForm2PDF(continuityData)
+
+
+
+generateCertificatePDF(welderData)
+
+
+
+downloadPDF(pdfDocument, filename)
+
+
+
+8.7 QR Code Service
+
+
+
+javascript// qrCodeService.js
+
+
+
+
+
+
+
+generateQRCode(data, options)
+
+
+
+generateQRCodeDataURL(url)
+
+
+
+
+
+
+
+9. PDF GENERATION SPECIFICATIONS
+
+
+
+9.1 Form1 PDF (WPQ Certificate)
+
+
+
+Reference: doc.pdf
+
+
+
+Structure:
+
+
+
+
+
+
+
+Header: Company logo + title
+
+
+
+Section 1: Basic information table
+
+
+
+Section 2: Test description
+
+
+
+Section 3: Testing variables part 1
+
+
+
+Section 4: Testing variables part 2
+
+
+
+Section 5: Results section
+
+
+
+Section 6: Signatures
+
+
+
+
+
+
+
+Key Requirements:
+
+
+
+
+
+
+
+Match exact layout from sample PDF
+
+
+
+Include all field values
+
+
+
+Professional formatting
+
+
+
+Print-ready quality
+
+
+
+
+
+
+
+9.2 Form2 PDF (Continuity Record)
+
+
+
+Reference: Provided image
+
+
+
+Structure:
+
+
+
+
+
+
+
+Header: Company info
+
+
+
+Welder details (read-only)
+
+
+
+Continuity records table
+
+
+
+Footer
+
+
+
+
+
+
+
+Key Requirements:
+
+
+
+
+
+
+
+Show message "No continuity records found" if empty
+
+
+
+Format dates as DD MMM YYYY
+
+
+
+Include all table columns
+
+
+
+
+
+
+
+9.3 Certificate PDF (ID Card)
+
+
+
+Reference: idcard1.pdf
+
+
+
+Structure:
+
+
+
+
+
+
+
+Front Side: Photo, basic info, QR code
+
+
+
+Back Side: Technical qualifications
+
+
+
+
+
+
+
+Key Requirements:
+
+
+
+
+
+
+
+Credit card size proportions
+
+
+
+High-quality photo rendering
+
+
+
+QR code links to Form1 PDF
+
+
+
+Professional design
+
+
+
+
+
+
+
+
+
+
+
+10. DEVELOPMENT PHASES
+
+
+
+Phase 1: Foundation (Days 1-2)
+
+
+
+✓ Project setup with Vite + React
+
+
+
+✓ Install all dependencies
+
+
+
+✓ Setup Tailwind + shadcn/ui
+
+
+
+✓ Configure Supabase
+
+
+
+✓ Create database schema
+
+
+
+✓ Setup storage buckets
+
+
+
+✓ Create folder structure
+
+
+
+✓ Setup routing
+
+
+
+Phase 2: Authentication (Day 3)
+
+
+
+✓ Login page UI
+
+
+
+✓ Auth service implementation
+
+
+
+✓ Protected routes
+
+
+
+✓ Session management
+
+
+
+✓ Change password modal
+
+
+
+✓ Logout functionality
+
+
+
+Phase 3: Layout & Navigation (Day 4)
+
+
+
+✓ Navbar component
+
+
+
+✓ Footer component
+
+
+
+✓ Layout wrapper
+
+
+
+✓ Home page with form buttons
+
+
+
+✓ Route navigation
+
+
+
+Phase 4: Form1 Entry (Days 5-7)
+
+
+
+✓ Section 1: Basic Info + photo upload
+
+
+
+✓ Section 2: Test Description
+
+
+
+✓ Section 3: Testing Variables 1
+
+
+
+✓ Section 4: Testing Variables 2
+
+
+
+✓ Section 5: Results
+
+
+
+✓ Section 6: Continuity + Certification
+
+
+
+✓ Form validation with Zod
+
+
+
+✓ Dynamic continuity table
+
+
+
+✓ Submit functionality
+
+
+
+Phase 5: CRUD Operations (Days 8-9)
+
+
+
+✓ Detailed Reports Form1 page
+
+
+
+✓ Search functionality
+
+
+
+✓ Results table with actions
+
+
+
+✓ Update Form1 page
+
+
+
+✓ Delete confirmation
+
+
+
+✓ Success/error toasts
+
+
+
+Phase 6: PDF Generation (Days 10-11)
+
+
+
+✓ Form1 PDF template
+
+
+
+✓ Form2 PDF template
+
+
+
+✓ Certificate PDF template
+
+
+
+✓ QR code generation
+
+
+
+✓ Download/preview functionality
+
+
+
+✓ Form1 Details page
+
+
+
+Phase 7: Search & Reports (Day 12)
+
+
+
+✓ Search page implementation
+
+
+
+✓ Complete Report page
+
+
+
+✓ Search results display
+
+
+
+Phase 8: Testing & Polish (Days 13-14)
+
+
+
+✓ End-to-end testing
+
+
+
+✓ Bug fixes
+
+
+
+✓ Performance optimization
+
+
+
+✓ Responsive design checks
+
+
+
+✓ Cross-browser testing
+
+
+
+✓ Deployment to Vercel
+
+
+
+
+
+
+
+11. ENVIRONMENT SETUP
+
+
+
+11.1 Required Accounts
+
+
+
+1. Supabase Account (free tier)
+
+
+
+2. Vercel Account (free tier)
+
+
+
+3. GitHub Account (for version control)
+
+
+
+11.2 Environment Variables
+
+
+
+.env.local:
+
+
+
+envVITE_SUPABASE_URL=https://your-project.supabase.co
+
+
+
+VITE_SUPABASE_ANON_KEY=your-anon-key
+
+
+
+VITE_APP_URL=http://localhost:5173
+
+
+
+.env.production (Vercel):
+
+
+
+envVITE_SUPABASE_URL=https://your-project.supabase.co
+
+
+
+VITE_SUPABASE_ANON_KEY=your-anon-key
+
+
+
+VITE_APP_URL=https://your-app.vercel.app
+
+
+
+11.3 Installation Commands
+
+
+
+bash# 1. Create project
+
+
+
+npm create vite@latest welder-management -- --template react
+
+
+
+cd welder-management
+
+
+
+
+
+
+
+# 2. Install dependencies
+
+
+
+npm install @supabase/supabase-js react-router-dom
+
+
+
+npm install @react-pdf/renderer qrcode.react
+
+
+
+npm install react-hook-form zod @hookform/resolvers
+
+
+
+npm install date-fns lucide-react
+
+
+
+npm install class-variance-authority clsx tailwind-merge
+
+
+
+npm install react-dropzone
+
+
+
+
+
+
+
+# 3. Install dev dependencies
+
+
+
+npm install -D tailwindcss postcss autoprefixer
+
+
+
+
+
+
+
+# 4. Initialize Tailwind
+
+
+
+npx tailwindcss init -p
+
+
+
+
+
+
+
+# 5. Setup shadcn/ui
+
+
+
+npx shadcn-ui@latest init
+
+
+
+
+
+
+
+# 6. Install shadcn components
+
+
+
+npx shadcn-ui@latest add button input label card table
+
+
+
+npx shadcn-ui@latest add dialog alert-dialog select
+
+
+
+npx shadcn-ui@latest add textarea badge alert dropdown-menu
+
+
+
+npx shadcn-ui@latest add popover calendar toast form
+
+
+
+
+
+
+
+12. DATA MODELS & TYPES
+
+
+
+12.1 Welder Type
+
+
+
+javascript{
+
+
+
+  id: "uuid",
+
+
+
+  certificate_no: "25161-0756",
+
+
+
+  symbol_stamp_no: "MZN-383",
+
+
+
+  welder_name: "ANANDHABABU THULASI",
+
+
+
+  welder_name_short: "A Thulasi",
+
+
+
+  iqama_passport_no: "2468077942",
+
+
+
+  photo_url: "https://...",
+
+
+
+  designation: "Senior Welder",
+
+
+
+  date_of_birth: "1985-01-15",
+
+
+
+  date_of_joining: "2020-03-10",
+
+
+
+  client_contractor: "ALMUZAIN",
+
+
+
+  client_name_short: "MZN",
+
+
+
+  status: "active",
+
+
+
+  is_deleted: false,
+
+
+
+  created_at: "2025-01-01T00:00:00Z",
+
+
+
+  updated_at: "2025-01-01T00:00:00Z"
+
+
+
+}
+
+
+
+12.2 WPQ Record Type
+
+
+
+javascript{
+
+
+
+  id: "uuid",
+
+
+
+  welder_id: "uuid",
+
+
+
+  date_welded: "2025-03-05",
+
+
+
+  wps_identification: "MZN/WPS-126/11 Rev.0",
+
+
+
+  wps_identification_type: "Test coupon",
+
+
+
+  base_metal_specification: "SA106 Gr.B to SA106 Gr.B",
+
+
+
+  thickness_mm: 8.56,
+
+
+
+  // ... all other fields from schema
+
+
+
+  code_year: "2025",
+
+
+
+  form_no: "ISS-ML-WPQ-251",
+
+
+
+  date_of_issue: "2025-10-30"
+
+
+
+}
+
+
+
+12.3 Continuity Record Type
+
+
+
+javascript{
+
+
+
+  id: "uuid",
+
+
+
+  welder_id: "uuid",
+
+
+
+  wpq_record_id: "uuid",
+
+
+
+  continuity_date: "2025-01-15",
+
+
+
+  verifier_name: "ABDUL HASEEB",
+
+
+
+  verifier_signature_url: "https://...",
+
+
+
+  company: "ALMUZAIN",
+
+
+
+  reference: "Project XYZ / Weld 123",
+
+
+
+  qc_name: "Mr. G. PURUSHOTH",
+
+
+
+  qc_signature_url: "https://..."
+
+
+
+}
+
+
+
+
+
+
+
+13. BUSINESS LOGIC & RULES
+
+
+
+13.1 Validation Rules
+
+
+
+Certificate Number:
+
+
+
+
+
+
+
+Required
+
+
+
+Unique across system
+
+
+
+Format: XXXXX-XXXX (flexible)
+
+
+
+
+
+
+
+Welder Name:
+
+
+
+
+
+
+
+Required
+
+
+
+Max 100 characters
+
+
+
+
+
+
+
+Iqama/Passport No:
+
+
+
+
+
+
+
+Required
+
+
+
+Numeric only
+
+
+
+Max 20 characters
+
+
+
+
+
+
+
+Photo Upload:
+
+
+
+
+
+
+
+Max size: 5MB
+
+
+
+Formats: JPG, PNG, WEBP
+
+
+
+Auto-resize to 800x800px
+
+
+
+
+
+
+
+Signature Upload:
+
+
+
+
+
+
+
+Max size: 2MB
+
+
+
+Formats: PNG with transparency preferred
+
+
+
+Auto-resize if needed
+
+
+
+
+
+
+
+13.2 Form Submission Logic
+
+
+
+On Save & New Entry:
+
+
+
+
+
+
+
+Validate all required fields
+
+
+
+Upload photo to Supabase Storage
+
+
+
+Create welder record
+
+
+
+Create WPQ record
+
+
+
+Create continuity records
+
+
+
+Show success toast
+
+
+
+Reset form
+
+
+
+Keep user on page
+
+
+
+
+
+
+
+On Save & Logout:
+
+
+
+
+
+
+
+Execute same save logic
+
+
+
+Logout user
+
+
+
+Redirect to login page
+
+
+
+
+
+
+
+On Cancel:
+
+
+
+
+
+
+
+Show confirmation dialog
+
+
+
+Discard changes
+
+
+
+Navigate back
+
+
+
+
+
+
+
+13.3 Update Logic
+
+
+
+On Update:
+
+
+
+
+
+
+
+Load existing data
+
+
+
+Allow edits
+
+
+
+Validate changes
+
+
+
+Update records
+
+
+
+Create audit log
+
+
+
+Show success toast
+
+
+
+Navigate back to detailed reports
+
+
+
+
+
+
+
+13.4 Delete Logic
+
+
+
+Soft Delete:
+
+
+
+
+
+
+
+Show confirmation dialog
+
+
+
+Set is_deleted = true
+
+
+
+Don't show in search results
+
+
+
+Keep in database for audit
+
+
+
+Show success toast
+
+
+
+
+
+
+
+
+
+
+
+14. SECURITY & AUTHENTICATION
+
+
+
+14.1 Row Level Security (RLS)
+
+
+
+sql-- All tables: Only authenticated users can access
+
+
+
+CREATE POLICY "Authenticated users only"
+
+
+
+  ON welders FOR ALL
+
+
+
+  TO authenticated
+
+
+
+  USING (true)
+
+
+
+  WITH CHECK (true);
+
+
+
+14.2 Storage Security
+
+
+
+sql-- Allow authenticated uploads
+
+
+
+CREATE POLICY "Authenticated uploads"
+
+
+
+  ON storage.objects FOR INSERT
+
+
+
+  TO authenticated
+
+
+
+  WITH CHECK (bucket_id IN ('welder-photos', 'signatures', 'documents'));
+
+
+
+
+
+
+
+-- Allow public reads
+
+
+
+CREATE POLICY "Public reads"
+
+
+
+  ON storage.objects FOR SELECT
+
+
+
+  TO public
+
+
+
+  USING (bucket_id IN ('welder-photos', 'signatures', 'documents'));
+
+
+
+14.3 Session Management
+
+
+
+
+
+
+
+Session expires after 7 days of inactivity
+
+
+
+Persistent login via refresh token
+
+
+
+Auto-redirect to login if session expires
+
+
+
+Secure cookie storage
+
+
+
+
+
+
+
+
+
+
+
+15. TESTING STRATEGY
+
+
+
+15.1 Manual Testing Checklist
+
+
+
+Authentication:
+
+
+
+
+
+
+
+ Login with valid credentials
+
+
+
+ Login with invalid credentials
+
+
+
+ Logout functionality
+
+
+
+ Change password
+
+
+
+ Session persistence
+
+
+
+
+
+
+
+Form1 Entry:
+
+
+
+
+
+
+
+ All fields accept input
+
+
+
+ Photo upload works
+
+
+
+ Signature upload works
+
+
+
+ Dynamic table add/remove rows
+
+
+
+ Form validation errors
+
+
+
+ Successful submission
+
+
+
+ Save & New Entry
+
+
+
+ Save & Logout
+
+
+
+
+
+
+
+CRUD Operations:
+
+
+
+
+
+
+
+ Search functionality
+
+
+
+ Update existing record
+
+
+
+ Delete record
+
+
+
+ Cancel actions
+
+
+
+
+
+
+
+PDF Generation:
+
+
+
+
+
+
+
+ Form1 PDF matches format
+
+
+
+ Form2 PDF matches format
+
+
+
+ Certificate PDF matches format
+
+
+
+ QR codes work
+
+
+
+ Download functionality
+
+
+
+
+
+
+
+15.2 Test Data
+
+
+
+Create 5-10 test welders with complete data for testing all features.
+
+
+
+
+
+
+
+16. DEPLOYMENT GUIDE
+
+
+
+16.1 Supabase Setup
+
+
+
+
+
+
+
+Create project
+
+
+
+Run SQL schema
+
+
+
+Create storage buckets
+
+
+
+Configure RLS policies
+
+
+
+Get API keys
+
+
+
+
+
+
+
+16.2 Vercel Deployment
+
+
+
+bash# 1. Install Vercel CLI
+
+
+
+npm i -g vercel
+
+
+
+
+
+
+
+# 2. Login
+
+
+
+vercel login
+
+
+
+
+
+
+
+# 3. Deploy
+
+
+
+vercel
+
+
+
+
+
+
+
+# 4. Add environment variables in Vercel dashboard
+
+
+
+# 5. Deploy to production
+
+
+
+vercel --prod
+
+
+
+16.3 Post-Deployment
+
+
+
+
+
+
+
+Test all features in production
+
+
+
+Create initial admin user
+
+
+
+Share credentials with client
+
+
+
+Provide training documentation
+
+
+
+
+
+
+
+
+
+
+
+17. KEY IMPLEMENTATION NOTES
+
+
+
+17.1 Critical Points
+
+
+
+
+
+
+
+Single Page Form: Form1 must be single scrollable page, NOT multi-step wizard
+
+
+
+Photo Display: Always show small circular avatar with name
+
+
+
+Default Values: DOJ column shows "DOJ" text if date not found
+
+
+
+Search Flexibility: Accept partial matches in search
+
+
+
+PDF Matching: PDFs must exactly match provided samples
+
+
+
+QR Codes: Must link to correct documents
+
+
+
+Soft Deletes: Never hard delete records
+
+
+
+Audit Trail: Log all changes
+
+
+
+
+
+
+
+17.2 Nice-to-Have Features (Post-MVP)
+
+
+
+
+
+
+
+Email notifications
+
+
+
+Advanced filtering
+
+
+
+Export to Excel
+
+
+
+Bulk upload
+
+
+
+Dashboard analytics
+
+
+
+Mobile app
+
+
+
+Role-based access control
+
+
+
+
+
+
+
+
+
+
+
+18. CONCLUSION
+
+
+
+This document contains all necessary information to build the Welder Management System. Follow the phases sequentially, and refer back to specific sections as needed during development.
+
+
+
+Total Estimated Timeline: 12-14 working days
+
+
+
+Team Size: 1 developer (you)
+
+
+
+Tech Expertise Required: React, Supabase, Tailwind CSS, PDF generation
+
+
+
+
+
+
+
+Note :- I forgot to tell you that the At the time of Sign in, should ask for photo and signature uploading(optional) and Date Of Birth(required) and designation(optional) and also should be logic for the future for entering the values and updating the values.
+
+
+
+
+
+
+
+Note :- We have take this website to the production level, so design this website according to that and 1 more thing that we have to push the code properly into the git time to time. And one more thing that the UI/UX of this website must be professional as well as modern because this not mine project, I have to deliver to my client, thus he must be satisfied. 
+
+
+
+
+
+
+
+Note you have to remembering on the time of UI/UX designing :- You are working as a Senior UI/UX Developer, focused on creating modern, attractive, professional, and highly engaging websites. You design user-centric interfaces by converting complex ideas into clean, intuitive experiences, ensuring strong visual hierarchy, consistency, accessibility, and responsiveness. You follow a complete UX process—pixel-perfect implementation—while aligning every design decision with business goals. You emphasize performance, usability, and design systems, collaborate closely with stakeholders, and apply best UI/UX practices to deliver visually appealing, seamless, and conversion-focused web experiences. And We are taking this website to a **production-ready level**, so it must be designed and implemented with **high standards of quality and consistency**. The **UI/UX should be modern, clean, and professional**, following best practices in layout, typography, color usage, responsiveness, and accessibility, as this is a **client-facing project** and must meet client expectations. Code should be **structured, readable, scalable, and well-documented**, with **regular and properly described Git commits** pushed on time to maintain version control and collaboration discipline. Overall, every design and development decision should reflect a **polished, enterprise-grade product** that ensures client satisfaction and long-term maintainability.
