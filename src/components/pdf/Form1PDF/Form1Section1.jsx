@@ -86,18 +86,12 @@ export default function Form1Section1({ data }) {
           </View>
         </View>
 
-        {/* Row 4: Joining Date & Nationality */}
+        {/* Row 4: Joining Date */}
         <View style={form1Styles.infoRow}>
           <View style={form1Styles.infoFieldHalf}>
             <Text style={form1Styles.fieldLabel}>Date of Joining:</Text>
             <View style={form1Styles.fieldValueContainer}>
               <Text style={form1Styles.fieldValue}>{data.dateOfJoining || 'N/A'}</Text>
-            </View>
-          </View>
-          <View style={form1Styles.infoFieldHalf}>
-            <Text style={form1Styles.fieldLabel}>Nationality:</Text>
-            <View style={form1Styles.fieldValueContainer}>
-              <Text style={form1Styles.fieldValue}>{data.nationality || 'N/A'}</Text>
             </View>
           </View>
         </View>

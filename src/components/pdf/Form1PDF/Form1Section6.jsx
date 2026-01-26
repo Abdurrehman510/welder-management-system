@@ -10,6 +10,13 @@ import { form1Styles } from './form1Styles'
 export default function Form1Section6({ data }) {
   const codeYear = data.codeYear || new Date().getFullYear().toString()
 
+
+  console.log('🖊 Form1 Section-6 Signatures:', {
+  certifier: data.certifierSignatureUrl,
+  reviewer: data.reviewerSignatureUrl,
+  client: data.clientRepSignatureUrl,
+})
+
   return (
     <View>
       {/* Section Header */}

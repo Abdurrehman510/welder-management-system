@@ -194,6 +194,18 @@ export const transformForm1Data = (welderData) => {
     clientRepName: safeValue(wpq.client_rep_name),
     formNo: safeValue(wpq.form_no),
     dateOfIssue: formatFormDate(wpq.date_of_issue),
+    // ================= SECTION 6 – SIGNATURE URLS (CRITICAL) =================
+    certifierSignatureUrl: wpq.certifier_signature_url
+      ? wpq.certifier_signature_url.replace(/^["']|["']$/g, '').trim()
+      : null,
+
+    reviewerSignatureUrl: wpq.reviewer_signature_url
+      ? wpq.reviewer_signature_url.replace(/^["']|["']$/g, '').trim()
+      : null,
+
+    clientRepSignatureUrl: wpq.client_rep_signature_url
+      ? wpq.client_rep_signature_url.replace(/^["']|["']$/g, '').trim()
+      : null,
     continuityRecords: continuity.map(record => ({
       date: formatFormDate(record.continuity_date),
       verifierName: safeValue(record.verifier_name),
