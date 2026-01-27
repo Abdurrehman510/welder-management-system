@@ -285,9 +285,6 @@ export default function Login() {
           © {new Date().getFullYear()} Industrial Support Services Co. Ltd.
           <br />
           All rights reserved.
-          <span className="block text-xs text-gray-400 mt-1">
-            v2.1.0 • Secure Access
-          </span>
         </p>
       </div>
 
