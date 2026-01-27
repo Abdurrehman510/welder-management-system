@@ -14,28 +14,23 @@ import { Textarea } from '@/components/ui/textarea'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { format } from 'date-fns'
-import { Calendar as CalendarIcon, Upload, X, Plus, Loader2, ImageIcon } from 'lucide-react'
+import { 
+  Calendar as CalendarIcon, 
+  Upload, 
+  X, 
+  Plus, 
+  Loader2, 
+  ImageIcon,
+  CheckCircle,
+  Building,
+  User,
+  FileSignature,
+  ClipboardCheck,
+  Sparkles
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import storageService from '../../services/storageService'
-
-/**
- * ✅ PHASE 7: Add New Continuity Record Dialog - FINAL VERSION
- * 
- * FINAL MODIFICATIONS:
- * 1. ✅ Does NOT delete previous continuity records
- * 2. ✅ Accepts common image types only (JPG, JPEG, PNG, WEBP)
- * 3. ✅ Only inserts NEW record without touching existing ones
- * 
- * Features:
- * - Add new continuity record to existing welder
- * - File upload for verifier and QC signatures
- * - Date picker integration
- * - Form validation
- * - Real-time upload with progress
- * 
- * @production-ready
- */
 
 export default function AddContinuityDialog({ open, onOpenChange, welderId, wpqRecordId, onSuccess }) {
   const [formData, setFormData] = useState({
@@ -53,10 +48,8 @@ export default function AddContinuityDialog({ open, onOpenChange, welderId, wpqR
 
   const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [activeTab, setActiveTab] = useState('basic')
 
-  /**
-   * Handle form field changes
-   */
   const handleChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
@@ -64,117 +57,96 @@ export default function AddContinuityDialog({ open, onOpenChange, welderId, wpqR
     }))
   }
 
-  /**
-   * Handle verifier signature upload
-   */
   const handleVerifierSignatureChange = (e) => {
-  const file = e.target.files?.[0]
-  if (!file) return
+    const file = e.target.files?.[0]
+    if (!file) return
 
-  // ✅ Check extension first (before validation)
-  const fileExtension = file.name.split('.').pop().toLowerCase()
-  const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp']
-  
-  if (!allowedExtensions.includes(fileExtension)) {
-    toast.error('Invalid File Type', {
-      description: `Only JPG, JPEG, PNG, and WEBP files are allowed. Your file: ${file.name}`,
-      duration: 5000,
+    const fileExtension = file.name.split('.').pop().toLowerCase()
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp']
+    
+    if (!allowedExtensions.includes(fileExtension)) {
+      toast.error('Invalid File Type', {
+        description: `Only JPG, JPEG, PNG, and WEBP files are allowed. Your file: ${file.name}`,
+        duration: 5000,
+      })
+      e.target.value = ''
+      return
+    }
+
+    const validation = storageService.validateFile(file, 'signature')
+    if (!validation.valid) {
+      toast.error('Invalid File', {
+        description: validation.error,
+        duration: 5000,
+      })
+      e.target.value = ''
+      return
+    }
+
+    setVerifierSignature(file)
+    
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setVerifierSignaturePreview(reader.result)
+    }
+    reader.readAsDataURL(file)
+
+    toast.success('Signature Selected', {
+      description: `${file.name} (${storageService.formatFileSize(file.size)})`,
     })
-    e.target.value = '' // Clear the input
-    return
   }
 
-  // ✅ Validate with storageService
-  const validation = storageService.validateFile(file, 'signature')
-  if (!validation.valid) {
-    toast.error('Invalid File', {
-      description: validation.error,
-      duration: 5000,
+  const handleQcSignatureChange = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const fileExtension = file.name.split('.').pop().toLowerCase()
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp']
+    
+    if (!allowedExtensions.includes(fileExtension)) {
+      toast.error('Invalid File Type', {
+        description: `Only JPG, JPEG, PNG, and WEBP files are allowed. Your file: ${file.name}`,
+        duration: 5000,
+      })
+      e.target.value = ''
+      return
+    }
+
+    const validation = storageService.validateFile(file, 'signature')
+    if (!validation.valid) {
+      toast.error('Invalid File', {
+        description: validation.error,
+        duration: 5000,
+      })
+      e.target.value = ''
+      return
+    }
+
+    setQcSignature(file)
+    
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setQcSignaturePreview(reader.result)
+    }
+    reader.readAsDataURL(file)
+
+    toast.success('Signature Selected', {
+      description: `${file.name} (${storageService.formatFileSize(file.size)})`,
     })
-    e.target.value = '' // Clear the input
-    return
   }
 
-  setVerifierSignature(file)
-  
-  // Create preview
-  const reader = new FileReader()
-  reader.onloadend = () => {
-    setVerifierSignaturePreview(reader.result)
-  }
-  reader.readAsDataURL(file)
-
-  toast.success('Signature Selected', {
-    description: `${file.name} (${storageService.formatFileSize(file.size)})`,
-  })
-}
-
-  /**
-   * Handle QC signature upload
-   */
- const handleQcSignatureChange = (e) => {
-  const file = e.target.files?.[0]
-  if (!file) return
-
-  // ✅ Check extension first (before validation)
-  const fileExtension = file.name.split('.').pop().toLowerCase()
-  const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp']
-  
-  if (!allowedExtensions.includes(fileExtension)) {
-    toast.error('Invalid File Type', {
-      description: `Only JPG, JPEG, PNG, and WEBP files are allowed. Your file: ${file.name}`,
-      duration: 5000,
-    })
-    e.target.value = '' // Clear the input
-    return
-  }
-
-  // ✅ Validate with storageService
-  const validation = storageService.validateFile(file, 'signature')
-  if (!validation.valid) {
-    toast.error('Invalid File', {
-      description: validation.error,
-      duration: 5000,
-    })
-    e.target.value = '' // Clear the input
-    return
-  }
-
-  setQcSignature(file)
-  
-  // Create preview
-  const reader = new FileReader()
-  reader.onloadend = () => {
-    setQcSignaturePreview(reader.result)
-  }
-  reader.readAsDataURL(file)
-
-  toast.success('Signature Selected', {
-    description: `${file.name} (${storageService.formatFileSize(file.size)})`,
-  })
-}
-
-  /**
-   * Remove verifier signature
-   */
   const removeVerifierSignature = () => {
     setVerifierSignature(null)
     setVerifierSignaturePreview(null)
     toast.info('Signature Removed')
   }
 
-  /**
-   * Remove QC signature
-   */
   const removeQcSignature = () => {
     setQcSignature(null)
     setQcSignaturePreview(null)
     toast.info('Signature Removed')
   }
 
-  /**
-   * Validate form before submission
-   */
   const validateForm = () => {
     if (!formData.date) {
       toast.error('Date Required', {
@@ -200,9 +172,6 @@ export default function AddContinuityDialog({ open, onOpenChange, welderId, wpqR
     return true
   }
 
-  /**
-   * ✅ FINAL: Only INSERT new record, do NOT delete existing ones
-   */
   const handleSubmit = async () => {
     if (!validateForm()) return
 
@@ -213,7 +182,6 @@ export default function AddContinuityDialog({ open, onOpenChange, welderId, wpqR
       let verifierSignatureUrl = null
       let qcSignatureUrl = null
 
-      // Upload verifier signature
       if (verifierSignature) {
         toast.info('Uploading verifier signature...')
         const { url, error } = await storageService.uploadSignature(verifierSignature)
@@ -223,7 +191,6 @@ export default function AddContinuityDialog({ open, onOpenChange, welderId, wpqR
         verifierSignatureUrl = url
       }
 
-      // Upload QC signature
       if (qcSignature) {
         toast.info('Uploading QC signature...')
         const { url, error } = await storageService.uploadSignature(qcSignature)
@@ -235,7 +202,6 @@ export default function AddContinuityDialog({ open, onOpenChange, welderId, wpqR
 
       setUploading(false)
 
-      // ✅ FINAL: Only INSERT new record (do NOT delete existing)
       const newContinuityRecord = {
         welder_id: welderId,
         wpq_record_id: wpqRecordId,
@@ -248,8 +214,6 @@ export default function AddContinuityDialog({ open, onOpenChange, welderId, wpqR
         qc_signature_url: qcSignatureUrl,
       }
 
-      console.log('📝 Inserting new continuity record:', newContinuityRecord)
-
       const { data, error } = await supabase
         .from('continuity_records')
         .insert([newContinuityRecord])
@@ -260,21 +224,18 @@ export default function AddContinuityDialog({ open, onOpenChange, welderId, wpqR
         throw new Error(error.message)
       }
 
-      console.log('✅ Successfully inserted:', data)
-
-      toast.success('Continuity Record Added', {
-        description: 'New continuity entry has been created successfully',
+      toast.success('Success!', {
+        description: 'New continuity record has been added successfully',
+        icon: <CheckCircle className="h-5 w-5 text-green-500" />,
+        duration: 3000,
       })
 
-      // Reset form
       resetForm()
       
-      // Call success callback
       if (onSuccess) {
         onSuccess()
       }
 
-      // Close dialog
       onOpenChange(false)
     } catch (error) {
       console.error('❌ Add continuity record error:', error)
@@ -287,9 +248,6 @@ export default function AddContinuityDialog({ open, onOpenChange, welderId, wpqR
     }
   }
 
-  /**
-   * Reset form
-   */
   const resetForm = () => {
     setFormData({
       date: null,
@@ -302,230 +260,428 @@ export default function AddContinuityDialog({ open, onOpenChange, welderId, wpqR
     setVerifierSignaturePreview(null)
     setQcSignature(null)
     setQcSignaturePreview(null)
+    setActiveTab('basic')
   }
 
-  /**
-   * Handle dialog close
-   */
   const handleClose = () => {
     if (saving) return
     resetForm()
     onOpenChange(false)
   }
 
+  const isFormValid = formData.date && formData.verifier.trim() && formData.company.trim()
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-2xl">
-            <Plus className="h-6 w-6 text-green-600" />
-            Add New Continuity Record
-          </DialogTitle>
-          <DialogDescription>
-            Add a new continuity entry for this welder's qualification record.
-            Previous records will be preserved.
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-6 py-4">
-          {/* Date */}
-          <div className="space-y-2">
-            <Label htmlFor="date" className="text-sm font-semibold">
-              Continuity Date <span className="text-red-500">*</span>
-            </Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={`w-full justify-start text-left font-normal ${
-                    !formData.date && 'text-muted-foreground'
-                  }`}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {formData.date ? format(formData.date, 'PPP') : 'Pick a date'}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={formData.date}
-                  onSelect={(date) => handleChange('date', date)}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          {/* Verifier Name */}
-          <div className="space-y-2">
-            <Label htmlFor="verifier" className="text-sm font-semibold">
-              Verifier Name <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="verifier"
-              placeholder="Enter verifier name"
-              value={formData.verifier}
-              onChange={(e) => handleChange('verifier', e.target.value)}
-              disabled={saving}
-            />
-          </div>
-
-          {/* Verifier Signature */}
-          <div className="space-y-2">
-            <Label htmlFor="verifierSignature" className="text-sm font-semibold">
-              Verifier Signature (Optional)
-            </Label>
-            <div className="text-xs text-gray-500 mb-2 flex items-center gap-1">
-              <ImageIcon className="h-3 w-3" />
-              Accepted formats: <span className="font-semibold">{storageService.getAllowedFormatsString()}</span>
-            </div>
-            {verifierSignaturePreview ? (
-              <div className="relative">
-                <img
-                  src={verifierSignaturePreview}
-                  alt="Verifier signature"
-                  className="h-24 w-auto rounded border border-gray-300 bg-white p-2"
-                />
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="sm"
-                  onClick={removeVerifierSignature}
-                  className="absolute -right-2 -top-2"
-                  disabled={saving}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+      <DialogContent className="max-w-4xl max-h-[95vh] overflow-hidden p-0">
+        <div className="grid md:grid-cols-3 h-full">
+          {/* Left Sidebar - Progress/Info */}
+          <div className="hidden md:block bg-gradient-to-b from-blue-50 to-indigo-50 border-r p-6">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="p-2 bg-white rounded-lg shadow-sm">
+                <Sparkles className="h-6 w-6 text-blue-600" />
               </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Input
-                    id="verifierSignature"
-                    type="file"
-                    accept="image/jpeg,image/png"
-                    onChange={handleVerifierSignatureChange}
+              <div>
+                <h3 className="font-bold text-lg">Add Continuity Record</h3>
+                <p className="text-sm text-gray-600">Complete all required fields</p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <h4 className="font-semibold text-sm text-gray-700 uppercase tracking-wider">Progress</h4>
+                <div className="space-y-3">
+                  <div className={`flex items-center gap-3 p-3 rounded-lg transition-all ${activeTab === 'basic' ? 'bg-white shadow-sm border' : 'opacity-75'}`}>
+                    <div className={`h-8 w-8 rounded-full flex items-center justify-center ${activeTab === 'basic' ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-400'}`}>
+                      <User className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">Basic Information</p>
+                      <p className="text-xs text-gray-500">Required details</p>
+                    </div>
+                    {formData.date && formData.verifier && formData.company && (
+                      <CheckCircle className="h-4 w-4 text-green-500 ml-auto" />
+                    )}
+                  </div>
+
+                  <div className={`flex items-center gap-3 p-3 rounded-lg transition-all ${activeTab === 'signatures' ? 'bg-white shadow-sm border' : 'opacity-75'}`}>
+                    <div className={`h-8 w-8 rounded-full flex items-center justify-center ${activeTab === 'signatures' ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-400'}`}>
+                      <FileSignature className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">Signatures</p>
+                      <p className="text-xs text-gray-500">Optional uploads</p>
+                    </div>
+                    {(verifierSignature || qcSignature) && (
+                      <CheckCircle className="h-4 w-4 text-green-500 ml-auto" />
+                    )}
+                  </div>
+
+                  <div className={`flex items-center gap-3 p-3 rounded-lg transition-all ${activeTab === 'additional' ? 'bg-white shadow-sm border' : 'opacity-75'}`}>
+                    <div className={`h-8 w-8 rounded-full flex items-center justify-center ${activeTab === 'additional' ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-400'}`}>
+                      <ClipboardCheck className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">Additional Details</p>
+                      <p className="text-xs text-gray-500">Optional information</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg p-4 border">
+                <h4 className="font-semibold text-sm text-gray-700 mb-2">Quick Tips</h4>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li className="flex items-start gap-2">
+                    <div className="h-5 w-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-xs font-semibold text-blue-600">1</span>
+                    </div>
+                    <span>Previous records are preserved</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="h-5 w-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-xs font-semibold text-blue-600">2</span>
+                    </div>
+                    <span>Upload clear signatures for verification</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="h-5 w-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-xs font-semibold text-blue-600">3</span>
+                    </div>
+                    <span>All marked fields (*) are required</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="md:col-span-2">
+            <DialogHeader className="p-6 pb-4 border-b">
+              <div className="flex items-center justify-between">
+                <div>
+                  <DialogTitle className="flex items-center gap-3 text-2xl">
+                    <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg">
+                      <Plus className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                        Add Continuity Record
+                      </span>
+                      <p className="text-sm font-normal text-gray-500 mt-1">
+                        Add new entry to welder's qualification record
+                      </p>
+                    </div>
+                  </DialogTitle>
+                </div>
+                <div className="md:hidden">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={handleClose}
                     disabled={saving}
-                    className="cursor-pointer"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+              <DialogDescription className="mt-2 text-gray-600">
+                Fill in the details below. All previously added records will remain unaffected.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="p-6 overflow-y-auto max-h-[60vh]">
+              {/* Mobile Tabs */}
+              <div className="md:hidden mb-6">
+                <div className="flex border-b">
+                  <button
+                    onClick={() => setActiveTab('basic')}
+                    className={`flex-1 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'basic' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'}`}
+                  >
+                    Basic
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('signatures')}
+                    className={`flex-1 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'signatures' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'}`}
+                  >
+                    Signatures
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('additional')}
+                    className={`flex-1 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'additional' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'}`}
+                  >
+                    Additional
+                  </button>
+                </div>
+              </div>
+
+              {/* Tab Content */}
+              <div className={`${activeTab !== 'basic' && 'hidden md:block'}`}>
+                <div className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Date */}
+                    <div className="space-y-2">
+                      <Label htmlFor="date" className="text-sm font-semibold flex items-center gap-2">
+                        <CalendarIcon className="h-4 w-4" />
+                        Continuity Date <span className="text-red-500">*</span>
+                      </Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={`w-full justify-start text-left font-normal h-11 ${
+                              !formData.date ? 'text-muted-foreground' : 'text-gray-900'
+                            } ${formData.date ? 'border-green-200 bg-green-50' : ''}`}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {formData.date ? format(formData.date, 'PPP') : 'Select date'}
+                            {formData.date && (
+                              <CheckCircle className="h-4 w-4 text-green-500 ml-auto" />
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={formData.date}
+                            onSelect={(date) => handleChange('date', date)}
+                            initialFocus
+                            className="rounded-md border"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+
+                    {/* Company */}
+                    <div className="space-y-2">
+                      <Label htmlFor="company" className="text-sm font-semibold flex items-center gap-2">
+                        <Building className="h-4 w-4" />
+                        Company <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="company"
+                        placeholder="Enter company name"
+                        value={formData.company}
+                        onChange={(e) => handleChange('company', e.target.value)}
+                        disabled={saving}
+                        className="h-11"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Verifier Name */}
+                  <div className="space-y-2">
+                    <Label htmlFor="verifier" className="text-sm font-semibold flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      Verifier Name <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="verifier"
+                      placeholder="Enter verifier's full name"
+                      value={formData.verifier}
+                      onChange={(e) => handleChange('verifier', e.target.value)}
+                      disabled={saving}
+                      className="h-11"
                     />
-                <Upload className="h-5 w-5 text-gray-400" />
+                  </div>
+                </div>
               </div>
-            )}
-          </div>
 
-          {/* Company */}
-          <div className="space-y-2">
-            <Label htmlFor="company" className="text-sm font-semibold">
-              Company <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="company"
-              placeholder="Enter company name"
-              value={formData.company}
-              onChange={(e) => handleChange('company', e.target.value)}
-              disabled={saving}
-            />
-          </div>
+              <div className={`mt-6 ${activeTab !== 'signatures' && 'hidden md:block'}`}>
+                <div className="space-y-6">
+                  <h3 className="font-semibold text-lg flex items-center gap-2">
+                    <FileSignature className="h-5 w-5 text-blue-500" />
+                    Digital Signatures
+                  </h3>
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Verifier Signature */}
+                    <div className="space-y-3">
+                      <Label htmlFor="verifierSignature" className="text-sm font-semibold">
+                        Verifier Signature
+                      </Label>
+                      <div className="text-xs text-gray-500 mb-2">
+                        <div className="flex items-center gap-1 mb-1">
+                          <ImageIcon className="h-3 w-3" />
+                          Formats: <span className="font-semibold">{storageService.getAllowedFormatsString()}</span>
+                        </div>
+                        <div className="text-gray-400">Optional but recommended</div>
+                      </div>
+                      {verifierSignaturePreview ? (
+                        <div className="relative group">
+                          <div className="border-2 border-dashed border-green-200 rounded-lg p-3 bg-green-50">
+                            <img
+                              src={verifierSignaturePreview}
+                              alt="Verifier signature"
+                              className="h-20 w-full object-contain rounded"
+                            />
+                          </div>
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            onClick={removeVerifierSignature}
+                            className="absolute -right-2 -top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                            disabled={saving}
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                            <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                            <p className="text-sm text-gray-500">Upload signature</p>
+                            <p className="text-xs text-gray-400 mt-1">Click or drag & drop</p>
+                          </div>
+                          <input
+                            id="verifierSignature"
+                            type="file"
+                            accept=".jpg,.jpeg,.png,.webp"
+                            onChange={handleVerifierSignatureChange}
+                            disabled={saving}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
+                    </div>
 
-          {/* Reference */}
-          <div className="space-y-2">
-            <Label htmlFor="reference" className="text-sm font-semibold">
-              Reference (Optional)
-            </Label>
-            <Textarea
-              id="reference"
-              placeholder="Enter reference details (e.g., Project name, weld number)"
-              value={formData.reference}
-              onChange={(e) => handleChange('reference', e.target.value)}
-              disabled={saving}
-              rows={3}
-            />
-          </div>
+                    {/* QC Signature */}
+                    <div className="space-y-3">
+                      <Label htmlFor="qcSignature" className="text-sm font-semibold">
+                        QC Signature
+                      </Label>
+                      <div className="text-xs text-gray-500 mb-2">
+                        <div className="flex items-center gap-1 mb-1">
+                          <ImageIcon className="h-3 w-3" />
+                          Formats: <span className="font-semibold">{storageService.getAllowedFormatsString()}</span>
+                        </div>
+                        <div className="text-gray-400">Optional</div>
+                      </div>
+                      {qcSignaturePreview ? (
+                        <div className="relative group">
+                          <div className="border-2 border-dashed border-blue-200 rounded-lg p-3 bg-blue-50">
+                            <img
+                              src={qcSignaturePreview}
+                              alt="QC signature"
+                              className="h-20 w-full object-contain rounded"
+                            />
+                          </div>
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            onClick={removeQcSignature}
+                            className="absolute -right-2 -top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                            disabled={saving}
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                            <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                            <p className="text-sm text-gray-500">Upload signature</p>
+                            <p className="text-xs text-gray-400 mt-1">Click or drag & drop</p>
+                          </div>
+                          <input
+                            id="qcSignature"
+                            type="file"
+                            accept=".jpg,.jpeg,.png,.webp"
+                            onChange={handleQcSignatureChange}
+                            disabled={saving}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-          {/* QC Name */}
-          <div className="space-y-2">
-            <Label htmlFor="qcName" className="text-sm font-semibold">
-              QC Name (Optional)
-            </Label>
-            <Input
-              id="qcName"
-              placeholder="Enter QC inspector name"
-              value={formData.qcName}
-              onChange={(e) => handleChange('qcName', e.target.value)}
-              disabled={saving}
-            />
-          </div>
+              <div className={`mt-6 ${activeTab !== 'additional' && 'hidden md:block'}`}>
+                <div className="space-y-6">
+                  <h3 className="font-semibold text-lg flex items-center gap-2">
+                    <ClipboardCheck className="h-5 w-5 text-blue-500" />
+                    Additional Details
+                  </h3>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="reference" className="text-sm font-semibold">
+                      Reference / Notes
+                    </Label>
+                    <Textarea
+                      id="reference"
+                      placeholder="Enter reference details, project name, weld number, or any additional notes..."
+                      value={formData.reference}
+                      onChange={(e) => handleChange('reference', e.target.value)}
+                      disabled={saving}
+                      rows={3}
+                      className="resize-none"
+                    />
+                    <p className="text-xs text-gray-500">Max 500 characters</p>
+                  </div>
 
-          {/* QC Signature */}
-          <div className="space-y-2">
-            <Label htmlFor="qcSignature" className="text-sm font-semibold">
-              QC Signature (Optional)
-            </Label>
-            <div className="text-xs text-gray-500 mb-2 flex items-center gap-1">
-              <ImageIcon className="h-3 w-3" />
-              Accepted formats: <span className="font-semibold">{storageService.getAllowedFormatsString()}</span>
+                  <div className="space-y-2">
+                    <Label htmlFor="qcName" className="text-sm font-semibold">
+                      QC Inspector Name
+                    </Label>
+                    <Input
+                      id="qcName"
+                      placeholder="Enter QC inspector's full name"
+                      value={formData.qcName}
+                      onChange={(e) => handleChange('qcName', e.target.value)}
+                      disabled={saving}
+                      className="h-11"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
-            {qcSignaturePreview ? (
-              <div className="relative">
-                <img
-                  src={qcSignaturePreview}
-                  alt="QC signature"
-                  className="h-24 w-auto rounded border border-gray-300 bg-white p-2"
-                />
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="sm"
-                  onClick={removeQcSignature}
-                  className="absolute -right-2 -top-2"
-                  disabled={saving}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Input
-                    id="qcSignature"
-                    type="file"
-                    accept="image/jpeg,image/png"
-                    onChange={handleQcSignatureChange}
+
+            <DialogFooter className="p-6 pt-4 border-t bg-gray-50">
+              <div className="flex flex-col sm:flex-row justify-between items-center w-full gap-4">
+                <div className="text-sm text-gray-500">
+                  <span className="font-medium">Status:</span>
+                  <span className={`ml-2 ${isFormValid ? 'text-green-600' : 'text-amber-600'}`}>
+                    {isFormValid ? 'Ready to submit' : 'Required fields missing'}
+                  </span>
+                </div>
+                <div className="flex gap-3 w-full sm:w-auto">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleClose}
                     disabled={saving}
-                    className="cursor-pointer"
-                />
-                <Upload className="h-5 w-5 text-gray-400" />
+                    className="flex-1 sm:flex-none"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={saving || !isFormValid}
+                    className="flex-1 sm:flex-none gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all"
+                  >
+                    {saving ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        {uploading ? 'Uploading Signatures...' : 'Creating Record...'}
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="h-4 w-4" />
+                        Add Continuity Record
+                        <CheckCircle className="h-4 w-4 ml-1" />
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
-            )}
+            </DialogFooter>
           </div>
         </div>
-
-        <DialogFooter>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleClose}
-            disabled={saving}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="button"
-            onClick={handleSubmit}
-            disabled={saving}
-            className="gap-2 bg-gradient-to-r from-green-600 to-green-700"
-          >
-            {saving ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                {uploading ? 'Uploading...' : 'Saving...'}
-              </>
-            ) : (
-              <>
-                <Plus className="h-4 w-4" />
-                Add Record
-              </>
-            )}
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   )
