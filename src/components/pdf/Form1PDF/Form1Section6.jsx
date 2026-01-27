@@ -11,12 +11,6 @@ export default function Form1Section6({ data }) {
   const codeYear = data.codeYear || new Date().getFullYear().toString()
 
 
-  console.log('🖊 Form1 Section-6 Signatures:', {
-  certifier: data.certifierSignatureUrl,
-  reviewer: data.reviewerSignatureUrl,
-  client: data.clientRepSignatureUrl,
-})
-
   return (
     <View>
       {/* Section Header */}
@@ -35,7 +29,7 @@ export default function Form1Section6({ data }) {
           coupons were prepared, welded, and tested in accordance with the requirements 
           of Section IX of the ASME BOILER AND PRESSURE VESSEL CODE {codeYear} Edition.
         </Text>
-
+ 
         <View style={form1Styles.divider} />
 
         {/* ✅ WITNESSED & CERTIFIED BY - With Signature */}

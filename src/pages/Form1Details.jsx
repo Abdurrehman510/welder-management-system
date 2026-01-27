@@ -131,8 +131,6 @@ export default function Form1Details() {
         continuity_records: continuityData || []
       })
 
-      console.log(pdfData)
-
       // Generate PDF
       const blob = await pdf(<Form1PDF data={pdfData} />).toBlob()
 
