@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { 
@@ -6,14 +6,11 @@ import {
   Lock, 
   ArrowRight, 
   Sparkles,
-  CheckCircle2,
-  Zap,
-  Shield,
-  TrendingUp
+  CheckCircle2
 } from 'lucide-react'
 
 export default function Home() {
-  const [hoveredCard, setHoveredCard] = useState(null)
+  const navigate = useNavigate()
 
   const forms = [
     {
@@ -80,209 +77,100 @@ export default function Home() {
 
   const handleFormClick = (form) => {
     if (form.available) {
-      alert(`Opening ${form.title}...`)
+      navigate(form.route)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50 overflow-hidden">
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
-        }
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        @keyframes slideInRight {
-          from {
-            opacity: 0;
-            transform: translateX(-30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-        @keyframes shimmer {
-          0% { background-position: -1000px 0; }
-          100% { background-position: 1000px 0; }
-        }
-        @keyframes scaleIn {
-          from { transform: scale(0.95); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
-        }
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-        .animate-fade-in-up {
-          animation: fadeInUp 0.6s ease-out forwards;
-        }
-        .animate-slide-in-right {
-          animation: slideInRight 0.6s ease-out forwards;
-        }
-        .animate-scale-in {
-          animation: scaleIn 0.5s ease-out forwards;
-        }
-        .shimmer-effect {
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.3),
-            transparent
-          );
-          background-size: 1000px 100%;
-          animation: shimmer 3s infinite;
-        }
-        .card-entrance-1 { animation-delay: 0.1s; opacity: 0; }
-        .card-entrance-2 { animation-delay: 0.2s; opacity: 0; }
-        .card-entrance-3 { animation-delay: 0.3s; opacity: 0; }
-        .card-entrance-4 { animation-delay: 0.4s; opacity: 0; }
-        .card-entrance-5 { animation-delay: 0.5s; opacity: 0; }
-      `}</style>
-
-      {/* Hero Section with Animated Background */}
-      <div className="relative bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white overflow-hidden">
-        {/* Animated Background Circles */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float"></div>
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float" style={{ animationDelay: '2s' }}></div>
-          <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-float" style={{ animationDelay: '4s' }}></div>
-        </div>
-
-        <div className="container mx-auto px-4 lg:px-8 py-16 relative z-10">
+    <div className="min-h-[calc(100vh-64px)] bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+        <div className="container mx-auto px-4 lg:px-8 py-12">
           <div className="max-w-3xl">
-            <div className="flex items-center gap-2 mb-4 animate-slide-in-right">
-              <Sparkles className="w-5 h-5 animate-pulse" />
+            <div className="flex items-center gap-2 mb-4">
+              <Sparkles className="w-5 h-5" />
               <span className="text-sm font-semibold uppercase tracking-wider">
                 Welcome to ISS Management System
               </span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-4 leading-tight animate-fade-in-up">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
               Welder Qualification Management
             </h1>
-            <p className="text-lg md:text-xl text-blue-100 leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s', opacity: 0 }}>
+            <p className="text-lg text-blue-100 leading-relaxed">
               Streamline your welder certification process with our comprehensive digital platform. 
               Manage qualifications, track continuity, and generate professional certificates all in one place.
             </p>
           </div>
         </div>
-
-        {/* Wave Separator */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 120" className="w-full h-12 md:h-16">
-            <path fill="#f9fafb" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
-          </svg>
-        </div>
       </div>
 
-      {/* Quick Stats with Stagger Animation */}
-      <div className="container mx-auto px-4 lg:px-8 -mt-8 relative z-20">
+      {/* Quick Stats */}
+      <div className="container mx-auto px-4 lg:px-8 -mt-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <Card className="shadow-xl border-t-4 border-t-blue-600 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 animate-scale-in card-entrance-1 overflow-hidden group">
-            <div className="absolute inset-0 shimmer-effect opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <CardHeader className="pb-3 relative">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-4xl font-bold text-blue-600 transition-transform duration-300 group-hover:scale-110">1</CardTitle>
-                <Zap className="w-8 h-8 text-blue-600 opacity-50 transition-all duration-300 group-hover:opacity-100 group-hover:scale-110" />
-              </div>
-              <CardDescription className="text-base">Active Form Available</CardDescription>
+          <Card className="shadow-lg border-t-4 border-t-blue-600">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-3xl font-bold text-blue-600">1</CardTitle>
+              <CardDescription>Active Form Available</CardDescription>
             </CardHeader>
           </Card>
-          <Card className="shadow-xl border-t-4 border-t-green-600 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 animate-scale-in card-entrance-2 overflow-hidden group">
-            <div className="absolute inset-0 shimmer-effect opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <CardHeader className="pb-3 relative">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-4xl font-bold text-green-600 transition-transform duration-300 group-hover:scale-110">100%</CardTitle>
-                <Shield className="w-8 h-8 text-green-600 opacity-50 transition-all duration-300 group-hover:opacity-100 group-hover:scale-110" />
-              </div>
-              <CardDescription className="text-base">Digital Process</CardDescription>
+          <Card className="shadow-lg border-t-4 border-t-green-600">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-3xl font-bold text-green-600">100%</CardTitle>
+              <CardDescription>Digital Process</CardDescription>
             </CardHeader>
           </Card>
-          <Card className="shadow-xl border-t-4 border-t-purple-600 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 animate-scale-in card-entrance-3 overflow-hidden group">
-            <div className="absolute inset-0 shimmer-effect opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <CardHeader className="pb-3 relative">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-4xl font-bold text-purple-600 transition-transform duration-300 group-hover:scale-110">24/7</CardTitle>
-                <TrendingUp className="w-8 h-8 text-purple-600 opacity-50 transition-all duration-300 group-hover:opacity-100 group-hover:scale-110" />
-              </div>
-              <CardDescription className="text-base">System Access</CardDescription>
+          <Card className="shadow-lg border-t-4 border-t-purple-600">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-3xl font-bold text-purple-600">24/7</CardTitle>
+              <CardDescription>System Access</CardDescription>
             </CardHeader>
           </Card>
         </div>
 
         {/* Forms Section */}
         <div className="mb-12">
-          <div className="flex items-center justify-between mb-8 animate-fade-in-up card-entrance-1">
+          <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Available Forms</h2>
-              <p className="text-gray-600 text-base md:text-lg">Select a form to get started with certification management</p>
+              <h2 className="text-3xl font-bold text-gray-900">Available Forms</h2>
+              <p className="text-gray-600 mt-1">Select a form to get started with certification management</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {forms.map((form, index) => {
+            {forms.map((form) => {
               const Icon = form.icon
-              const isHovered = hoveredCard === form.id
               return (
                 <Card
                   key={form.id}
-                  onMouseEnter={() => setHoveredCard(form.id)}
-                  onMouseLeave={() => setHoveredCard(null)}
-                  className={`animate-scale-in card-entrance-${index + 1} group relative overflow-hidden transition-all duration-500 ${
+                  className={`group relative overflow-hidden transition-all duration-300 ${
                     form.available
-                      ? 'cursor-pointer hover:shadow-2xl hover:-translate-y-2 border-2 hover:border-blue-500'
+                      ? 'cursor-pointer hover:shadow-2xl hover:-translate-y-1 border-2 hover:border-blue-500'
                       : 'opacity-60 cursor-not-allowed'
                   }`}
                   onClick={() => handleFormClick(form)}
                 >
-                  {/* Animated Background Gradient */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${form.color} transition-all duration-500 ${
-                    form.available && isHovered ? 'opacity-10 scale-110' : 'opacity-0'
-                  }`} />
+                  {/* Background Gradient */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${form.color} opacity-5 group-hover:opacity-10 transition-opacity`} />
                   
-                  {/* Shimmer Effect */}
-                  {form.available && (
-                    <div className={`absolute inset-0 shimmer-effect transition-opacity duration-500 ${
-                      isHovered ? 'opacity-100' : 'opacity-0'
-                    }`}></div>
-                  )}
-
                   {/* Lock Icon for Unavailable Forms */}
                   {!form.available && (
-                    <div className="absolute top-4 right-4 animate-pulse">
+                    <div className="absolute top-4 right-4">
                       <Lock className="w-6 h-6 text-gray-400" />
                     </div>
                   )}
 
                   <CardHeader className="relative">
                     <div className="flex items-start justify-between mb-4">
-                      <div className={`relative p-3 rounded-xl bg-gradient-to-br ${form.color} shadow-lg transition-all duration-500 ${
-                        form.available && isHovered ? 'scale-110 rotate-3' : ''
-                      }`}>
+                      <div className={`p-3 rounded-xl bg-gradient-to-br ${form.color} shadow-lg ${
+                        form.available ? 'group-hover:scale-110' : ''
+                      } transition-transform duration-300`}>
                         <Icon className="w-8 h-8 text-white" />
-                        {form.available && (
-                          <div className={`absolute inset-0 rounded-xl bg-white transition-opacity duration-500 ${
-                            isHovered ? 'opacity-20' : 'opacity-0'
-                          }`}></div>
-                        )}
                       </div>
-                      <Badge className={`${form.badgeColor} transition-transform duration-300 ${
-                        form.available && isHovered ? 'scale-110' : ''
-                      }`}>
+                      <Badge className={form.badgeColor}>
                         {form.badge}
                       </Badge>
                     </div>
-                    <CardTitle className={`text-2xl font-bold mb-2 transition-colors duration-300 ${
-                      isHovered ? 'text-blue-600' : 'text-gray-900'
-                    }`}>
+                    <CardTitle className="text-2xl font-bold text-gray-900 mb-2">
                       {form.title}
                     </CardTitle>
                     <CardDescription className="text-base font-medium text-blue-600">
@@ -291,20 +179,14 @@ export default function Home() {
                   </CardHeader>
 
                   <CardContent className="relative">
-                    <p className={`leading-relaxed mb-4 transition-colors duration-300 ${
-                      isHovered ? 'text-gray-700' : 'text-gray-600'
-                    }`}>
+                    <p className="text-gray-600 leading-relaxed mb-4">
                       {form.description}
                     </p>
                     
                     {form.available ? (
-                      <div className={`flex items-center text-blue-600 font-semibold transition-all duration-300 ${
-                        isHovered ? 'gap-3' : 'gap-2'
-                      }`}>
+                      <div className="flex items-center text-blue-600 font-semibold group-hover:gap-2 transition-all">
                         <span>Open Form</span>
-                        <ArrowRight className={`w-5 h-5 transition-transform duration-300 ${
-                          isHovered ? 'translate-x-2' : ''
-                        }`} />
+                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                       </div>
                     ) : (
                       <div className="flex items-center text-gray-400 font-semibold">
@@ -313,12 +195,9 @@ export default function Home() {
                     )}
                   </CardContent>
 
-                  {/* Hover Glow Effect */}
+                  {/* Hover Effect Border */}
                   {form.available && (
-                    <div className={`absolute inset-0 rounded-lg transition-opacity duration-500 pointer-events-none ${
-                      isHovered ? 'opacity-100' : 'opacity-0'
-                    }`} 
-                         style={{ boxShadow: '0 0 40px rgba(59, 130, 246, 0.3)' }} />
+                    <div className="absolute inset-0 border-2 border-transparent group-hover:border-blue-500 rounded-lg transition-colors pointer-events-none" />
                   )}
                 </Card>
               )
@@ -326,55 +205,41 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Features Section with Enhanced Animation */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 animate-fade-in-up">System Features</h2>
+        {/* Features Section */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">System Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
                 title: 'Digital Records',
                 description: 'Paperless documentation system',
                 icon: FileText,
-                color: 'blue',
               },
               {
                 title: 'Quick Search',
                 description: 'Find welders instantly',
                 icon: CheckCircle2,
-                color: 'green',
               },
               {
                 title: 'Compliance',
                 description: 'ASME, AWS, API standards',
-                icon: Shield,
-                color: 'purple',
+                icon: CheckCircle2,
               },
               {
                 title: 'Reports',
                 description: 'Generate comprehensive reports',
-                icon: TrendingUp,
-                color: 'orange',
+                icon: CheckCircle2,
               },
             ].map((feature, index) => {
               const Icon = feature.icon
-              const colorClasses = {
-                blue: 'bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white',
-                green: 'bg-green-100 text-green-600 group-hover:bg-green-600 group-hover:text-white',
-                purple: 'bg-purple-100 text-purple-600 group-hover:bg-purple-600 group-hover:text-white',
-                orange: 'bg-orange-100 text-orange-600 group-hover:bg-orange-600 group-hover:text-white',
-              }
               return (
-                <Card 
-                  key={index} 
-                  className={`animate-scale-in card-entrance-${index + 1} text-center hover:shadow-xl transition-all duration-500 hover:-translate-y-2 group cursor-pointer overflow-hidden`}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-transparent to-gray-50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <CardHeader className="relative">
-                    <div className={`mx-auto w-16 h-16 rounded-2xl flex items-center justify-center mb-4 ${colorClasses[feature.color]} transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-md`}>
-                      <Icon className="w-8 h-8 transition-transform duration-500 group-hover:scale-110" />
+                <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3">
+                      <Icon className="w-6 h-6 text-blue-600" />
                     </div>
-                    <CardTitle className="text-xl font-bold mb-2 transition-colors duration-300 group-hover:text-blue-600">{feature.title}</CardTitle>
-                    <CardDescription className="transition-colors duration-300 group-hover:text-gray-700">{feature.description}</CardDescription>
+                    <CardTitle className="text-lg">{feature.title}</CardTitle>
+                    <CardDescription>{feature.description}</CardDescription>
                   </CardHeader>
                 </Card>
               )

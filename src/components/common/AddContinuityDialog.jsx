@@ -524,7 +524,6 @@ export default function AddContinuityDialog({ open, onOpenChange, welderId, wpqR
                             className="absolute -right-2 -top-2 opacity-0 group-hover:opacity-100 transition-opacity"
                             disabled={saving}
                           >
-                            <X className="h-3 w-3" />
                           </Button>
                         </div>
                       ) : (
