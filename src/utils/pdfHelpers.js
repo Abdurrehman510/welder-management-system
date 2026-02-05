@@ -476,6 +476,3 @@ export const generateCertificateQRCode = (certificateNo) => {
 export const generateQRVerificationURL = (certificateNo, welderName) => {
   return generateForm1QRCode(certificateNo)
 }
-
-
-
