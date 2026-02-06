@@ -1,27 +1,27 @@
-// src/pages/VerifyCertificatePage.jsx
+// src/pages/VerifyForm1Page.jsx
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import LoadingSpinner from '../components/common/LoadingSpinner'
-import { CreditCard, Download, ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react'
+import { Download, ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { pdf } from '@react-pdf/renderer'
 import welderService from '../services/welderService'
 import wpqService from '../services/wpqService'
 import continuityService from '../services/continuityService'
 import pdfService from '../services/pdfService'
-import CertificatePDF from '../components/pdf/CertificatePDF'
+import Form1PDF from '../components/pdf/Form1PDF'
 
 /**
- * VerifyCertificatePage - QR Code Handler
- * When Form1 QR is scanned → Generate Certificate PDF
+ * VerifyForm1Page - QR Code Handler
+ * When Certificate QR is scanned → Generate Form1 PDF
  */
 
-export default function VerifyCertificatePage() {
+export default function VerifyForm1Page() {
   const { certificateNo } = useParams()
   const navigate = useNavigate()
-  
+
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [welderData, setWelderData] = useState(null)
@@ -43,7 +43,7 @@ export default function VerifyCertificatePage() {
 
       // Search for welder by certificate number
       const { data: searchResults, error: searchError } = await welderService.searchWelders(certificateNo)
-      
+
       if (searchError) throw new Error(searchError)
       if (!searchResults || searchResults.length === 0) {
         throw new Error('Certificate not found')
@@ -55,25 +55,22 @@ export default function VerifyCertificatePage() {
       const { data: welderDetails, error: welderError } = await welderService.getWelderById(welder.id)
       if (welderError) throw new Error(welderError)
 
-      const { data: wpqData, error: wpqError } = await wpqService.getWPQRecordByWelderId(welder.id)
+      const { data: wpqData } = await wpqService.getWPQRecordByWelderId(welder.id)
       const { data: continuityData } = await continuityService.getContinuityRecordsByWelderId(welder.id)
 
-      setWelderData({
+      const fullData = {
         welder: welderDetails,
         wpq_records: wpqData ? [wpqData] : [],
         continuity_records: continuityData || []
-      })
+      }
+
+      setWelderData(fullData)
 
       // Auto-generate PDF
-      await generateCertificatePDF({
-        welder: welderDetails,
-        wpq_records: wpqData ? [wpqData] : [],
-        continuity_records: continuityData || []
-      })
-
+      await generateForm1PDF(fullData)
     } catch (err) {
       console.error('❌ Verification error:', err)
-      setError(err.message || 'Failed to verify certificate')
+      setError(err.message || 'Failed to verify Form1')
       toast.error('Verification Failed', {
         description: err.message,
         duration: 5000,
@@ -84,26 +81,26 @@ export default function VerifyCertificatePage() {
   }
 
   /**
-   * Generate Certificate PDF
+   * Generate Form1 PDF
    */
-  const generateCertificatePDF = async (data) => {
+  const generateForm1PDF = async (data) => {
     setGenerating(true)
 
     try {
-      console.log('🎴 Generating Certificate PDF...')
+      console.log('📄 Generating Form1 PDF...')
 
-      const certificateData = await pdfService.prepareCertificateData(data)
-      const blob = await pdf(<CertificatePDF data={certificateData} />).toBlob()
+      const form1Data = await pdfService.prepareForm1Data(data)
+      const blob = await pdf(<Form1PDF data={form1Data} />).toBlob()
 
       const filename = pdfService.generateFilename(
-        'certificate',
+        'form1',
         data.welder.certificate_no,
         data.welder.welder_name
       )
 
       pdfService.downloadPDF(blob, filename)
 
-      toast.success('Certificate Generated Successfully', {
+      toast.success('Form1 Generated Successfully', {
         description: `Downloaded: ${filename}`,
         duration: 4000,
       })
@@ -120,9 +117,9 @@ export default function VerifyCertificatePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-gray-100 flex items-center justify-center p-8">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 flex items-center justify-center p-8">
         <Card className="p-12 max-w-md w-full text-center">
-          <LoadingSpinner size="lg" text="Verifying certificate..." />
+          <LoadingSpinner size="lg" text="Verifying Form1..." />
         </Card>
       </div>
     )
@@ -130,7 +127,7 @@ export default function VerifyCertificatePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-gray-100 flex items-center justify-center p-8">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 flex items-center justify-center p-8">
         <Card className="p-12 max-w-md w-full text-center">
           <div className="mb-6">
             <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
@@ -149,21 +146,21 @@ export default function VerifyCertificatePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-gray-100 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 p-8">
       <div className="max-w-2xl mx-auto">
         <Card className="p-8">
           {/* Success Header */}
           <div className="text-center mb-8">
-            <div className="mx-auto w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-              <CheckCircle2 className="w-10 h-10 text-purple-600" />
+            <div className="mx-auto w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle2 className="w-10 h-10 text-blue-600" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Certificate Verified</h1>
-            <p className="text-gray-600">ID Card has been generated automatically</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Form1 Verified</h1>
+            <p className="text-gray-600">Form1 (WPQ Certificate) has been generated automatically</p>
           </div>
 
           {/* Welder Info */}
           {welderData && (
-            <div className="bg-purple-50 rounded-lg p-6 mb-6">
+            <div className="bg-blue-50 rounded-lg p-6 mb-6">
               <h3 className="font-bold text-gray-900 mb-4">Welder Information</h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
@@ -189,9 +186,9 @@ export default function VerifyCertificatePage() {
           {/* Actions */}
           <div className="flex flex-col gap-3">
             <Button
-              onClick={() => welderData && generateCertificatePDF(welderData)}
+              onClick={() => welderData && generateForm1PDF(welderData)}
               disabled={generating}
-              className="w-full gap-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800"
+              className="w-full gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
             >
               {generating ? (
                 <>
@@ -201,7 +198,7 @@ export default function VerifyCertificatePage() {
               ) : (
                 <>
                   <Download className="w-4 h-4" />
-                  Download Certificate Again
+                  Download Form1 Again
                 </>
               )}
             </Button>
