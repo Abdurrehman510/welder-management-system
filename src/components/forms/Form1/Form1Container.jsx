@@ -35,47 +35,20 @@ export default function Form1Container() {
     section6: null,
   })
 
-  const [expandedSections, setExpandedSections] = useState({
-    section1: true,
-    section2: false,
-    section3: false,
-    section4: false,
-    section5: false,
-    section6: false,
-  })
-
   const [errors, setErrors] = useState({})
   const [submitting, setSubmitting] = useState(false)
   const [attemptedSubmit, setAttemptedSubmit] = useState(false)
 
-  // Toggle section expansion with auto-scroll
-  const toggleSection = (section) => {
-    setExpandedSections(prev => {
-      const newState = {
-        section1: section === 'section1',
-        section2: section === 'section2',
-        section3: section === 'section3',
-        section4: section === 'section4',
-        section5: section === 'section5',
-        section6: section === 'section6',
-      }
-      
-      // Scroll to section after state update
-      setTimeout(() => {
-        const sectionElement = sectionRefs.current[section]
-        if (sectionElement && newState[section]) {
-          sectionElement.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'start',
-            inline: 'nearest'
-          })
-          // Add small offset to account for sticky header
-          window.scrollBy({ top: -80, behavior: 'smooth' })
-        }
-      }, 100)
-      
-      return newState
-    })
+  const scrollToSection = (section) => {
+    const sectionElement = sectionRefs.current[section]
+    if (sectionElement) {
+      sectionElement.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start',
+        inline: 'nearest'
+      })
+      window.scrollBy({ top: -80, behavior: 'smooth' })
+    }
   }
 
   // Validate all sections with detailed field-level errors
@@ -169,7 +142,7 @@ export default function Form1Container() {
       if (firstErrorSection) {
         const sectionKey = errorSectionMap[firstErrorSection]
         if (sectionKey) {
-          toggleSection(sectionKey)
+          scrollToSection(sectionKey)
         }
       }
       
@@ -191,7 +164,7 @@ export default function Form1Container() {
           })
           
           // Focus on Section 1
-          toggleSection('section1')
+          scrollToSection('section1')
           setErrors({
             basicInfo: {
               certificateNo: 'This certificate number already exists'
@@ -224,14 +197,6 @@ export default function Form1Container() {
 
       // Handle different actions
       if (action === 'save-and-new') {
-        setExpandedSections({
-          section1: true,
-          section2: false,
-          section3: false,
-          section4: false,
-          section5: false,
-          section6: false,
-        })
         window.scrollTo({ top: 0, behavior: 'smooth' })
       } else if (action === 'save-and-logout') {
         await signOut()
@@ -416,7 +381,7 @@ export default function Form1Container() {
                           }
                           const sectionKey = sectionMap[section]
                           if (sectionKey) {
-                            toggleSection(sectionKey)
+                            scrollToSection(sectionKey)
                           }
                         }}
                       >
@@ -430,76 +395,78 @@ export default function Form1Container() {
           </Alert>
         )}
 
-        {/* Form Sections with Refs */}
-        <div className="space-y-6">
-          <div ref={el => sectionRefs.current.section1 = el}>
-            <Section1_BasicInfo
-              data={formData.basicInfo}
-              onChange={(data) => updateSection('basicInfo', data)}
-              expanded={expandedSections.section1}
-              onToggle={() => toggleSection('section1')}
-              errors={errors.basicInfo || {}}
-              sectionStatus={getSectionStatus('basicInfo')}
-              attemptedSubmit={attemptedSubmit}
-            />
-          </div>
+        {/* Single Card Form Body */}
+        <Card className="p-6 md:p-8 shadow-lg border-gray-200">
+          <div className="space-y-10">
+            <div ref={el => sectionRefs.current.section1 = el} className="space-y-6">
+              <Section1_BasicInfo
+                data={formData.basicInfo}
+                onChange={(data) => updateSection('basicInfo', data)}
+                errors={errors.basicInfo || {}}
+                sectionStatus={getSectionStatus('basicInfo')}
+                attemptedSubmit={attemptedSubmit}
+                collapsible={false}
+                embedded
+              />
+            </div>
 
-          <div ref={el => sectionRefs.current.section2 = el}>
-            <Section2_TestDescription
-              data={formData.testDescription}
-              onChange={(data) => updateSection('testDescription', data)}
-              expanded={expandedSections.section2}
-              onToggle={() => toggleSection('section2')}
-              errors={errors.testDescription || {}}
-              sectionStatus={getSectionStatus('testDescription')}
-              attemptedSubmit={attemptedSubmit}
-            />
-          </div>
+            <div ref={el => sectionRefs.current.section2 = el} className="space-y-6 border-t pt-10">
+              <Section2_TestDescription
+                data={formData.testDescription}
+                onChange={(data) => updateSection('testDescription', data)}
+                errors={errors.testDescription || {}}
+                sectionStatus={getSectionStatus('testDescription')}
+                attemptedSubmit={attemptedSubmit}
+                collapsible={false}
+                embedded
+              />
+            </div>
 
-          <div ref={el => sectionRefs.current.section3 = el}>
-            <Section3_TestingVars1
-              data={formData.testingVars1}
-              onChange={(data) => updateSection('testingVars1', data)}
-              expanded={expandedSections.section3}
-              onToggle={() => toggleSection('section3')}
-              sectionStatus={{ hasError: false, isComplete: true }}
-            />
-          </div>
+            <div ref={el => sectionRefs.current.section3 = el} className="space-y-6 border-t pt-10">
+              <Section3_TestingVars1
+                data={formData.testingVars1}
+                onChange={(data) => updateSection('testingVars1', data)}
+                sectionStatus={{ hasError: false, isComplete: true }}
+                collapsible={false}
+                embedded
+              />
+            </div>
 
-          <div ref={el => sectionRefs.current.section4 = el}>
-            <Section4_TestingVars2
-              data={formData.testingVars2}
-              onChange={(data) => updateSection('testingVars2', data)}
-              expanded={expandedSections.section4}
-              onToggle={() => toggleSection('section4')}
-              sectionStatus={{ hasError: false, isComplete: true }}
-            />
-          </div>
+            <div ref={el => sectionRefs.current.section4 = el} className="space-y-6 border-t pt-10">
+              <Section4_TestingVars2
+                data={formData.testingVars2}
+                onChange={(data) => updateSection('testingVars2', data)}
+                sectionStatus={{ hasError: false, isComplete: true }}
+                collapsible={false}
+                embedded
+              />
+            </div>
 
-          <div ref={el => sectionRefs.current.section5 = el}>
-            <Section5_Results
-              data={formData.results}
-              onChange={(data) => updateSection('results', data)}
-              expanded={expandedSections.section5}
-              onToggle={() => toggleSection('section5')}
-              errors={errors.results || {}}
-              sectionStatus={getSectionStatus('results')}
-              attemptedSubmit={attemptedSubmit}
-            />
-          </div>
+            <div ref={el => sectionRefs.current.section5 = el} className="space-y-6 border-t pt-10">
+              <Section5_Results
+                data={formData.results}
+                onChange={(data) => updateSection('results', data)}
+                errors={errors.results || {}}
+                sectionStatus={getSectionStatus('results')}
+                attemptedSubmit={attemptedSubmit}
+                collapsible={false}
+                embedded
+              />
+            </div>
 
-          <div ref={el => sectionRefs.current.section6 = el}>
-            <Section6_Continuity
-              data={formData.continuity}
-              onChange={(data) => updateSection('continuity', data)}
-              expanded={expandedSections.section6}
-              onToggle={() => toggleSection('section6')}
-              errors={errors.continuity || {}}
-              sectionStatus={getSectionStatus('continuity')}
-              attemptedSubmit={attemptedSubmit}
-            />
+            <div ref={el => sectionRefs.current.section6 = el} className="space-y-6 border-t pt-10">
+              <Section6_Continuity
+                data={formData.continuity}
+                onChange={(data) => updateSection('continuity', data)}
+                errors={errors.continuity || {}}
+                sectionStatus={getSectionStatus('continuity')}
+                attemptedSubmit={attemptedSubmit}
+                collapsible={false}
+                embedded
+              />
+            </div>
           </div>
-        </div>
+        </Card>
 
         {/* Form Actions */}
         <FormActions

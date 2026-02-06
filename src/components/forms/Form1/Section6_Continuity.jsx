@@ -10,11 +10,13 @@ const FORM_NO_PREFIX = 'ISS-ML-WPQ-'
 export default function Section6_Continuity({ 
   data, 
   onChange, 
-  expanded, 
+  expanded = true, 
   onToggle, 
   errors, 
   sectionStatus,
-  attemptedSubmit 
+  attemptedSubmit,
+  collapsible = true,
+  embedded = false
 }) {
   const handleChange = (field, value) => {
     onChange({ [field]: value })
@@ -83,44 +85,467 @@ export default function Section6_Continuity({
     return ''
   }
 
+  const showContent = collapsible ? expanded : true
+  const headerClasses = collapsible
+    ? 'cursor-pointer hover:bg-gray-50/50 transition-colors rounded-t-lg'
+    : 'rounded-t-lg'
+
+  const headerContent = (
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm ${
+          hasError ? 'bg-red-100 ring-2 ring-red-300' : 
+          isComplete ? 'bg-green-100 ring-2 ring-green-300' : 
+          'bg-blue-100 ring-2 ring-blue-200'
+        }`}>
+          {hasError ? (
+            <AlertCircle className="w-5 h-5 text-red-600" />
+          ) : isComplete ? (
+            <CheckCircle2 className="w-5 h-5 text-green-600" />
+          ) : (
+            <span className="text-blue-600 font-bold text-lg">6</span>
+          )}
+        </div>
+        <div>
+          <CardTitle className="text-xl font-bold">Section 6: Continuity, Certification & Actions</CardTitle>
+          <p className="text-sm text-gray-600 mt-1">Continuity records, certification details, and signatures</p>
+        </div>
+      </div>
+      {collapsible && (
+        expanded ? 
+          <ChevronUp className="w-6 h-6 text-gray-500" /> : 
+          <ChevronDown className="w-6 h-6 text-gray-500" />
+      )}
+    </div>
+  )
+
+  if (embedded) {
+    return (
+      <div className="space-y-6">
+        {headerContent}
+        {showContent && (
+          <div className="space-y-6 pt-2">
+            {/* Welding Continuity Table */}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <Label className="text-lg font-bold flex items-center gap-2">
+                  Welding Continuity Records
+                  <span className="text-red-500 text-sm">*</span>
+                </Label>
+                <Button 
+                  type="button" 
+                  onClick={addRecord}
+                  size="sm"
+                  className="gap-2 bg-blue-600 hover:bg-blue-700"
+                  disabled={data.continuityRecords.length >= 10}
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Record
+                </Button>
+              </div>
+
+              <div className="border rounded-lg overflow-hidden shadow-sm">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200">
+                      <tr>
+                        <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">
+                          Date <span className="text-red-500">*</span>
+                        </th>
+                        <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Verifier Name</th>
+                        <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Signature</th>
+                        <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Company</th>
+                        <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Reference</th>
+                        <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">QC Name</th>
+                        <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">QC Signature</th>
+                        <th className="px-3 py-3 text-center text-xs font-bold text-gray-700 w-20">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y bg-white">
+                      {data.continuityRecords.map((record, index) => (
+                        <ContinuityRow
+                          key={record.id}
+                          record={record}
+                          onChange={(recordData) => handleRecordChange(index, recordData)}
+                          onRemove={() => removeRecord(index)}
+                          canRemove={data.continuityRecords.length > 1}
+                          attemptedSubmit={attemptedSubmit}
+                          errors={errors?.continuityRecords?.[index] || {}}
+                        />
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {attemptedSubmit && errors.continuityRecords && typeof errors.continuityRecords === 'string' && (
+                <p className="text-sm text-red-600 mt-2 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" />
+                  {errors.continuityRecords}
+                </p>
+              )}
+            </div>
+
+            {/* Certification Block */}
+            <div className="border-t-2 pt-6 mt-6">
+              <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="w-2 h-8 bg-blue-600 rounded-full"></span>
+                Certification
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <Label htmlFor="codeYear" className="font-semibold">
+                    Code Year <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="codeYear"
+                    value={data.codeYear}
+                    onChange={(e) => handleChange('codeYear', e.target.value)}
+                    placeholder="e.g., 2025"
+                    className={getInputClassName('codeYear')}
+                    maxLength={4}
+                    required
+                  />
+                  {attemptedSubmit && errors.codeYear && (
+                    <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      {errors.codeYear}
+                    </p>
+                  )}
+                  <p className="text-xs text-gray-500 mt-1">Must be a 4-digit year</p>
+                </div>
+                <div>
+                  <Label htmlFor="formNo" className="font-semibold">
+                    Form Number <span className="text-red-500">*</span>
+                  </Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 
+                      text-blue-600 
+                      font-medium 
+                      text-sm">
+                      {FORM_NO_PREFIX}
+                    </span>
+                    <Input
+                      id="formNo"
+                      value={getFormNoDisplay()}
+                      onChange={handleFormNoChange}
+                      placeholder="001"
+                      className={`pl-28 ${getInputClassName('formNo')}`}
+                      required
+                    />
+                  </div>
+                  {attemptedSubmit && errors.formNo && (
+                    <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      {errors.formNo}
+                    </p>
+                  )}
+                  <p className="text-xs text-gray-500 mt-1">Enter only the number (e.g., 001, 251)</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Signature Table */}
+            <div className="border-t-2 pt-6 mt-6">
+              <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="w-2 h-8 bg-blue-600 rounded-full"></span>
+                Signatures
+              </h3>
+              
+              {/* Witnessed & Certified By */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div>
+                  <Label htmlFor="certifiedDate" className="font-semibold">
+                    Certified Date <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="certifiedDate"
+                    type="date"
+                    value={data.certifiedDate}
+                    onChange={(e) => handleChange('certifiedDate', e.target.value)}
+                    className={getInputClassName('certifiedDate')}
+                    required
+                  />
+                  {attemptedSubmit && errors.certifiedDate && (
+                    <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      {errors.certifiedDate}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="certifiedName" className="font-semibold">
+                    Certified By (Name) <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="certifiedName"
+                    value={data.certifiedName}
+                    onChange={(e) => handleChange('certifiedName', e.target.value)}
+                    placeholder="Print name"
+                    className={getInputClassName('certifiedName')}
+                    required
+                  />
+                  {attemptedSubmit && errors.certifiedName && (
+                    <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      {errors.certifiedName}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="certifiedCertNo" className="font-semibold">CSWIP/AWS Cert No.</Label>
+                  <Input
+                    id="certifiedCertNo"
+                    value={data.certifiedCertNo}
+                    onChange={(e) => handleChange('certifiedCertNo', e.target.value)}
+                    placeholder="Certificate number"
+                  />
+                </div>
+              </div>
+
+              {/* ✅ NEW: Certifier Signature Upload */}
+              <div className="mb-6">
+                <Label className="font-semibold mb-2 block">
+                  Certifier Signature (Optional)
+                </Label>
+                <div className="text-xs text-gray-500 mb-2 flex items-center gap-1">
+                  <ImageIcon className="h-3 w-3" />
+                  Accepted formats: <span className="font-semibold">JPG, JPEG, PNG</span> • This signature will appear in the certificate
+                </div>
+                {data.certifierSignaturePreview || data.certifierSignatureUrl ? (
+                  <div className="relative inline-block">
+                    <img
+                      src={data.certifierSignaturePreview || data.certifierSignatureUrl}
+                      alt="Certifier signature"
+                      className="h-24 w-auto rounded border border-gray-300 bg-white p-2"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        handleChange('certifierSignature', null)
+                        handleChange('certifierSignaturePreview', null)
+                      }}
+                      className="absolute -right-2 -top-2"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="certifierSignature"
+                      type="file"
+                      accept="image/jpeg,image/png"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          handleChange('certifierSignature', file)
+                          const reader = new FileReader()
+                          reader.onloadend = () => {
+                            handleChange('certifierSignaturePreview', reader.result)
+                          }
+                          reader.readAsDataURL(file)
+                        }
+                      }}
+                      className="cursor-pointer"
+                    />
+                    <Upload className="h-5 w-5 text-gray-400" />
+                  </div>
+                )}
+              </div>
+
+              {/* Reviewed By */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <Label htmlFor="reviewedDate" className="font-semibold">Reviewed Date</Label>
+                  <Input
+                    id="reviewedDate"
+                    type="date"
+                    value={data.reviewedDate}
+                    onChange={(e) => handleChange('reviewedDate', e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="reviewedName" className="font-semibold">Reviewed By (Name)</Label>
+                  <Input
+                    id="reviewedName"
+                    value={data.reviewedName}
+                    onChange={(e) => handleChange('reviewedName', e.target.value)}
+                    placeholder="Print name"
+                  />
+                </div>
+              </div>
+
+              {/* ✅ NEW: Reviewer Signature Upload */}
+              <div className="mb-6">
+                <Label className="font-semibold mb-2 block">
+                  Reviewer Signature (Optional)
+                </Label>
+                <div className="text-xs text-gray-500 mb-2 flex items-center gap-1">
+                  <ImageIcon className="h-3 w-3" />
+                  Accepted formats: <span className="font-semibold">JPG, JPEG, PNG</span>
+                </div>
+                {data.reviewerSignaturePreview || data.reviewerSignatureUrl ? (
+                  <div className="relative inline-block">
+                    <img
+                      src={data.reviewerSignaturePreview || data.reviewerSignatureUrl}
+                      alt="Reviewer signature"
+                      className="h-24 w-auto rounded border border-gray-300 bg-white p-2"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        handleChange('reviewerSignature', null)
+                        handleChange('reviewerSignaturePreview', null)
+                      }}
+                      className="absolute -right-2 -top-2"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="reviewerSignature"
+                      type="file"
+                      accept="image/jpeg,image/png"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          handleChange('reviewerSignature', file)
+                          const reader = new FileReader()
+                          reader.onloadend = () => {
+                            handleChange('reviewerSignaturePreview', reader.result)
+                          }
+                          reader.readAsDataURL(file)
+                        }
+                      }}
+                      className="cursor-pointer"
+                    />
+                    <Upload className="h-5 w-5 text-gray-400" />
+                  </div>
+                )}
+              </div>
+
+              {/* Client/Contractor Representative */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <Label htmlFor="clientRepDate" className="font-semibold">Client Representative Date</Label>
+                  <Input
+                    id="clientRepDate"
+                    type="date"
+                    value={data.clientRepDate}
+                    onChange={(e) => handleChange('clientRepDate', e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="clientRepName" className="font-semibold">Client Representative (Name)</Label>
+                  <Input
+                    id="clientRepName"
+                    value={data.clientRepName}
+                    onChange={(e) => handleChange('clientRepName', e.target.value)}
+                    placeholder="Print name"
+                  />
+                </div>
+              </div>
+
+              {/* ✅ NEW: Client Rep Signature Upload */}
+              <div className="mb-6">
+                <Label className="font-semibold mb-2 block">
+                  Client Representative Signature (Optional)
+                </Label>
+                <div className="text-xs text-gray-500 mb-2 flex items-center gap-1">
+                  <ImageIcon className="h-3 w-3" />
+                  Accepted formats: <span className="font-semibold">JPG, JPEG, PNG</span>
+                </div>
+                {data.clientRepSignaturePreview || data.clientRepSignatureUrl ? (
+                  <div className="relative inline-block">
+                    <img
+                      src={data.clientRepSignaturePreview || data.clientRepSignatureUrl}
+                      alt="Client rep signature"
+                      className="h-24 w-auto rounded border border-gray-300 bg-white p-2"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        handleChange('clientRepSignature', null)
+                        handleChange('clientRepSignaturePreview', null)
+                      }}
+                      className="absolute -right-2 -top-2"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="clientRepSignature"
+                      type="file"
+                      accept="image/jpeg,image/png"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          handleChange('clientRepSignature', file)
+                          const reader = new FileReader()
+                          reader.onloadend = () => {
+                            handleChange('clientRepSignaturePreview', reader.result)
+                          }
+                          reader.readAsDataURL(file)
+                        }
+                      }}
+                      className="cursor-pointer"
+                    />
+                    <Upload className="h-5 w-5 text-gray-400" />
+                  </div>
+                )}
+              </div>
+
+              {/* Date of Issue */}
+              <div>
+                <Label htmlFor="dateOfIssue" className="font-semibold">Date of Issue</Label>
+                <Input
+                  id="dateOfIssue"
+                  type="date"
+                  value={data.dateOfIssue}
+                  onChange={(e) => handleChange('dateOfIssue', e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Required Fields Note */}
+            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border-l-4 border-blue-500 rounded-lg p-4 shadow-sm">
+              <p className="text-sm text-blue-900 font-medium">
+                <strong className="text-blue-700">📋 Required fields (*):</strong> At least one continuity record with date, 
+                Code Year, Certified Date, Certified By Name, and Form Number
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
   return (
-    <Card className={`transition-all shadow-md hover:shadow-lg ${
+    <Card className={`transition-all ${
       hasError ? 'border-red-300 bg-red-50/30' : 
       isComplete ? 'border-green-300 bg-green-50/30' : 
       'border-gray-200'
-    }`}>
+    } ${collapsible ? 'shadow-md hover:shadow-lg' : 'shadow-sm'}`}>
       <CardHeader 
-        className="cursor-pointer hover:bg-gray-50/50 transition-colors rounded-t-lg"
-        onClick={onToggle}
+        className={headerClasses}
+        onClick={collapsible ? onToggle : undefined}
       >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm ${
-              hasError ? 'bg-red-100 ring-2 ring-red-300' : 
-              isComplete ? 'bg-green-100 ring-2 ring-green-300' : 
-              'bg-blue-100 ring-2 ring-blue-200'
-            }`}>
-              {hasError ? (
-                <AlertCircle className="w-5 h-5 text-red-600" />
-              ) : isComplete ? (
-                <CheckCircle2 className="w-5 h-5 text-green-600" />
-              ) : (
-                <span className="text-blue-600 font-bold text-lg">6</span>
-              )}
-            </div>
-            <div>
-              <CardTitle className="text-xl font-bold">Section 6: Continuity, Certification & Actions</CardTitle>
-              <p className="text-sm text-gray-600 mt-1">Continuity records, certification details, and signatures</p>
-            </div>
-          </div>
-          {expanded ? 
-            <ChevronUp className="w-6 h-6 text-gray-500" /> : 
-            <ChevronDown className="w-6 h-6 text-gray-500" />
-          }
-        </div>
+        {headerContent}
       </CardHeader>
 
-      {expanded && (
+      {showContent && (
         <CardContent className="space-y-6 pt-6">
           {/* Welding Continuity Table */}
           <div>
